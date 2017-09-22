@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var api = require('./routes/api');
 
-mongoose.connect('mongodb://127.0.0.1:27017');
 // connect to mongodb here
 
 var app = express();

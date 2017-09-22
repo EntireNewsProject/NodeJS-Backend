@@ -2,12 +2,11 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var newsSchema = new newsSchema({
-    title: String,
-    datetime:   { type: Date, default: Date.now },
+    title: {type: String, required: true, trim: true},
     source: String,
     cover: String,
     article: String,
-    slug: String,
+    slug: {type: String, lowercase: true, trim: true, required: true, index: true, unique: true},
     saves: Number,
     views: Number,
     published: Boolean,
@@ -17,7 +16,7 @@ var newsSchema = new newsSchema({
         favs:  Number
     },
     hidden: Boolean
-});
+}, {timestamps: true});
 
 module.exports = {
     News: mongoose.model('News', newsSchema),

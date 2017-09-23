@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var moduleNews = require('./models/news');
+mongoose.connect = ('localhost:27017');
 
 
 moduleNews.News.find().sort({createdAt: -1})
@@ -10,7 +11,7 @@ moduleNews.News.find().sort({createdAt: -1})
     .then(function (result) {
         if(!result) res.sendStatus(500);
         else res.status(200).json(result);
-    },
+    }),
 router.get('/news', function (req, res) {
     //newsart.find().limit(limit).skip(page * limit)
     res.send({news: []});
@@ -24,4 +25,4 @@ router.get('/news/:id', function (req, res) {
     res.send({news: []});
 }),
 
-module.exports = router,
+module.exports = router;

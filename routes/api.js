@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var moduleNews = require('./models/news');
-mongoose.connect = ('localhost:27017');
+var moduleNews = require('../models/news');
 
 
 moduleNews.News.find().sort({createdAt: -1})

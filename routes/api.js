@@ -1,6 +1,7 @@
 var moduleNews = require('../models/news');
 var express = require('express');
 var router = express.Router();
+var auth = require('../config/auth');
 var MAX_LIMIT = 12;
 
 moduleNews.News.find().sort({createdAt: -1})
@@ -16,7 +17,8 @@ router.get('/news', function (req, res) {
     res.send({news: []});
 }),
 
-router.post('/news', function (req, res) {
+router.post('/news', auth.isAuth, function (req, res) {
+    //if (req.user)
     res.sendStatus(201);
 }),
 

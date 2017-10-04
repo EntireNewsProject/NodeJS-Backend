@@ -1,17 +1,20 @@
 var moduleNews = require('../models/news');
 var express = require('express');
 var router = express.Router();
+var promise = require('bluebird');
 var auth = require('../config/auth');
 var MAX_LIMIT = 12;
+var mongoose = require('mongoose');
+mongoose.Promise = promise;
 
-moduleNews.News.find().sort({createdAt: -1})
-    .limit(MAX_LIMIT)
-    //.select(FIELDS)
-    .exec()
-    .then(function (result) {
-        if(!result) res.sendStatus(500);
-        else res.status(200).json(result);
-    }),
+// moduleNews.News.find().sort({createdAt: -1})
+//     .limit(MAX_LIMIT)
+//     //.select(FIELDS)
+//     .exec()
+//     .then(function (result) {
+//         if(!result) res.sendStatus(500);
+//         else res.status(200).json(result);
+//     }),
 router.get('/news', function (req, res) {
     //newsart.find().limit(limit).skip(page * limit)
     res.send({news: []});

@@ -6,9 +6,17 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var api = require('./routes/api');
+var app = express();
 
+var mongoDB = 'mongodb://127.0.0.1/my_database';
+mongoose.connect(mongoDB, {
+    useMongoClient: true
+});
 
-mongoose.connect = ('localhost:27017');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+// mongoose.connect = ('localhost:27017');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

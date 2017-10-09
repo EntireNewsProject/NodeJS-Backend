@@ -1,6 +1,6 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
+//var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 var api = require('./routes/api');
 var app = express();
 
-var mongoDB = 'mongodb://127.0.0.1/my_database';
+var mongoDB = 'mongodb://localhost:27017';
 mongoose.connect(mongoDB, {
     useMongoClient: true
 });
@@ -49,5 +49,7 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+app.listen(3000);
 
 module.exports = app;

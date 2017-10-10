@@ -17,13 +17,17 @@ mongoose.Promise = promise;
 //     });
 
 router.route('/news')
-    .get(function (req, res) {
+    .get(function (req, res, next) {
         //newsart.find().limit(limit).skip(page * limit)
         res.send({News: []});
+        next();
     })
-    .post(auth.isAuth, function (req, res) {
-        //The res.user check if the user is making the request. If not then the else statement is executed
-        if (req.user) {
+    .put(auth.isAuth, function (req, res, next) {
+        //The res.user checks if the user is making the request. If not then the else statement is executed
+        if (!req.user) {
+            res.sendStatus(401);
+        }
+        else {
             var news = new moduleNews.News({
                 title: req.body.title,
                 source: req.body.source,
@@ -31,14 +35,14 @@ router.route('/news')
             });
             news.save(function (err) {
                 if (err) return res.sendStatus(500)
-             })
+            });
         }
-        //The else below returns an error if a non user is trying to add data to the database
-        else{
-            res.sendStatus(401);
-        }
-        res.sendStatus(201);
-    });
+        next();
+    })
+    .delete(auth.isAuth, function (req, res, next){
+        res.sendStatus();
+        next();
+});
 
 router.route('/news/:id')
     .get(function (req, res) {

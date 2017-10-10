@@ -8,22 +8,19 @@ var mongoose = require('mongoose');
 var api = require('./routes/api');
 var app = express();
 
-var mongoDB = 'mongodb://localhost:27017';
+//Local database connection
+var mongoDB = 'mongodb://127.0.0.1:27017';
 mongoose.connect(mongoDB, {
     useMongoClient: true
 });
 
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-// mongoose.connect = ('localhost:27017');
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));   //throw error if db connection issue
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -50,6 +47,6 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
-app.listen(3000);
+app.listen(3000);   //remove after done testing the requests locally
 
 module.exports = app;

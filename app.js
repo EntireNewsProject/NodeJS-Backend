@@ -47,6 +47,6 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
-app.listen(3000);   //remove after done testing the requests locally
+//app.listen(3000);   //remove after done testing the requests locally
 
 module.exports = app;

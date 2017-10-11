@@ -21,5 +21,5 @@ var newsSchema = new Schema({
 }, {timestamps: true});
 
 module.exports = {
-    News: mongoose.model('News', newsSchema),
+    News: mongoose.model('News', newsSchema)
 };

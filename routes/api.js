@@ -14,7 +14,7 @@ mongoose.Promise = promise;
 //         if(!result) res.sendStatus(500);
 //         else res.status(200).json(result);
 //     });
-var max_limit = 12;
+var MAX_LIMIT = 12;
 
 router.route('/news')
     //this route will get the data from the data base and respond to the request with required fields
@@ -25,8 +25,8 @@ router.route('/news')
         moduleNews.News
             .find({source: source})
             .sort({timestamps: -1})
-            .limit(max_limit)
-            .skip(page * max_limit)
+            .limit(MAX_LIMIT)
+            .skip(page * MAX_LIMIT)
             //this portion needs some work....i am not sure about the else part.. figure out what the News:[] will exactly return
             .exec()
             .then(function(err, res){
@@ -60,7 +60,7 @@ router.route('/news')
     .delete(auth.isAuth, function (req, res, next){
         res.sendStatus();
         next();
-});
+    });
 
 router.route('/news/:id')
     .get(function (req, res) {

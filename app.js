@@ -30,14 +30,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', api);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function (err, req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -47,6 +47,6 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
-//app.listen(3000);   //remove after done testing the requests locally
+app.listen(3000); //delete once done testing locally
 
 module.exports = app;

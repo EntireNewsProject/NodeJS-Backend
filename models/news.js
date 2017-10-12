@@ -13,10 +13,6 @@ var newsSchema = new Schema({
     views: Number,
     published: Boolean,
     deleted: Boolean,
-    meta: {
-        votes: Number,
-        favs:  Number
-    },
     hidden: Boolean
 }, {timestamps: true});
 

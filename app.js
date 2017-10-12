@@ -47,6 +47,4 @@ app.use(function (err, req, res) {
     res.render('error');
 });
 
-app.listen(3000); //delete once done testing locally
-
 module.exports = app;

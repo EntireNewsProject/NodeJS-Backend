@@ -1,0 +1,47 @@
+Amazon AWS EC2 Instances
+
+// install python 2.7
+sudo apt-get install python2.7
+python -V
+// install python 3.5
+sudo apt-get install python3.5
+python3 -V
+
+
+// install node 8.x.x
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+
+pm2 - help run app in background
+
+shell cmd for creating user in mongoDB
+mongo
+
+use entirenews
+
+db.createUser({user:"EntireNewsApp",pwd:"Js3dgK5sdg7BHJIsdGH89JdKsd9fB0",roles:[{role:"readWrite",db:"entirenews"}]})
+
+then
+sudo nano /etc/mongod.conf
+#enable security like this
+. . .
+security:
+  authorization: "enabled"
+. . .
+then restart mongod server
+
+
+For windows: move this file to "C:\Program Files\Git\usr\bin"
+Then open CMD or Terminal with Admin access
+>>cd C:\Program Files\Git\usr\bin
+>>chmod 400 EntireNews.pem
+>>ssh -i EntireNews.pem ubuntu@ec2-52-10-35-26.us-west-2.compute.amazonaws.com -p 22
+>>mkdir entirenews
+>>cd entirenews
+>>mkdir python
+>>mkdir nodejs
+>>ls
+>>cd nodejs
+// run chmod only once, u don't need to do it every time
+// ignore mkdir commands now, as i have already created all those dirs

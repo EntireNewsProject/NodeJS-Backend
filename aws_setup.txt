@@ -14,6 +14,79 @@ sudo apt-get install -y nodejs
 
 
 pm2 - help run app in background
+npm install pm2@latest -g
+pm2 start app.js
+
+pm2 Cheat sheet commands
+----------------------------------
+# Fork mode
+pm2 start app.js --name my-api # Name process
+
+# Cluster mode
+pm2 start app.js -i 0        # Will start maximum processes with LB depending on available CPUs
+pm2 start app.js -i max      # Same as above, but deprecated.
+
+# Listing
+
+pm2 list               # Display all processes status
+pm2 jlist              # Print process list in raw JSON
+pm2 prettylist         # Print process list in beautified JSON
+
+pm2 describe 0         # Display all informations about a specific process
+
+pm2 monit              # Monitor all processes
+
+# Logs
+
+pm2 logs [--raw]       # Display all processes logs in streaming
+pm2 flush              # Empty all log file
+pm2 reloadLogs         # Reload all logs
+
+# Actions
+
+pm2 stop all           # Stop all processes
+pm2 restart all        # Restart all processes
+
+pm2 reload all         # Will 0s downtime reload (for NETWORKED apps)
+
+pm2 stop 0             # Stop specific process id
+pm2 restart 0          # Restart specific process id
+
+pm2 delete 0           # Will remove process from pm2 list
+pm2 delete all         # Will remove all processes from pm2 list
+
+# Misc
+
+pm2 reset <process>    # Reset meta data (restarted time...)
+pm2 updatePM2          # Update in memory pm2
+pm2 ping               # Ensure pm2 daemon has been launched
+pm2 sendSignal SIGUSR2 my-app # Send system signal to script
+pm2 start app.js --no-daemon
+pm2 start app.js --no-vizion
+pm2 start app.js --no-autorestart
+
+pm2 start app.js           # Start app.js
+
+pm2 start app.js -- -a 23  # Pass arguments '-a 23' argument to app.js script
+
+pm2 start app.js --name serverone # Start a process and name it as serverone
+                                    # you can now stop the process by doing
+                                    # pm2 stop serverone
+
+pm2 start app.js --node-args="--debug=7001" # --node-args to pass options to node V8
+
+pm2 start app.js -i 0             # Start maximum processes depending on available CPUs (cluster mode)
+
+pm2 start app.js --log-date-format "YYYY-MM-DD HH:mm Z"    # Log will be prefixed with custom time format
+
+pm2 start app.json                # Start processes with options declared in app.json
+                                    # Go to chapter Multi process JSON declaration for more
+
+pm2 start app.js -e err.log -o out.log  # Start and specify error and out log
+
+
+
+
 
 shell cmd for creating user in mongoDB
 mongo
@@ -45,3 +118,13 @@ Then open CMD or Terminal with Admin access
 >>cd nodejs
 // run chmod only once, u don't need to do it every time
 // ignore mkdir commands now, as i have already created all those dirs
+
+MongoD - Status
+sudo systemctl status mongod
+sudo systemctl start mongod // to run
+sudo systemctl stop mongod // to stop
+sudo systemctl restart mongod  // to restart
+press 'q' to quit in STATUS mode
+
+to login to mongo
+mongo --port 27017 -u EntireNewsApp -p XXX --authenticationDatabase entirenews

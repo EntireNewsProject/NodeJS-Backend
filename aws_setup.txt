@@ -118,3 +118,13 @@ Then open CMD or Terminal with Admin access
 >>cd nodejs
 // run chmod only once, u don't need to do it every time
 // ignore mkdir commands now, as i have already created all those dirs
+
+MongoD - Status
+sudo systemctl status mongod
+sudo systemctl start mongod // to run
+sudo systemctl stop mongod // to stop
+sudo systemctl restart mongod  // to restart
+press 'q' to quit in STATUS mode
+
+to login to mongo
+mongo --port 27017 -u EntireNewsApp -p XXX --authenticationDatabase entirenews

@@ -18,9 +18,7 @@ router.route('/news')
     .get(function (req, res) {
         var page = req.query.page | 1;    //gets the query from the request
         var source = req.query.source;
-        console.log(1);
         if (source) {
-            console.log(2);
             //moduleNews.News.find({source: source}).limit(max_limit).skip(page * max_limit);
             moduleNews.News
                 .find({published: true, deleted:false, source: source})
@@ -29,7 +27,6 @@ router.route('/news')
                 //.skip(page - 1 * MAX_LIMIT)
                 .exec()
                 .then(function(result){
-                    console.log(3);
                     if (result) {
 
                         res.status(200).json(result);
@@ -37,12 +34,10 @@ router.route('/news')
                         res.status(400).json({
                             error: 'Internal server error'
                         });
-                    console.log(4);
                 })
                 .catch(function (err) {
                 });
         } else {
-            console.log(5);
             res.status(404).json({
                 error: 'Source not provided'
             });
@@ -69,7 +64,6 @@ router.route('/news')
 
             var news = new moduleNews.News(params);
             news.save(function (err) {
-                console.log(err);
                 if (err)
                     res.status(400).json({
                         error: 'Internal server error'

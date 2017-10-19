@@ -7,14 +7,6 @@ var mongoose = require('mongoose');
 
 mongoose.Promise = promise;
 
-// moduleNews.News.find().sort({createdAt: -1})
-//     .limit(MAX_LIMIT)
-//     //.select(FIELDS)
-//     .exec()
-//     .then(function (result) {
-//         if(!result) res.sendStatus(500);
-//         else res.status(200).json(result);
-//     });
 var MAX_LIMIT = 12;
 
 router.route('/news')
@@ -62,14 +54,14 @@ router.route('/news')
             if (req.body.article) params.article = req.body.article;
             params.published = true;
             params.deleted = false;
-            
+
             var news = new moduleNews.News(params);
-            news.save(function (err) {                
+            news.save(function (err) {
                 if (err)
                     res.status(400).json({
                         error: 'Internal server error'
                     });
-                else 
+                else
                     res.status(201).json({
                         error: 'Item created successfully'
                     });

@@ -15,7 +15,9 @@ var newsSchema = new Schema({
     date: {type: String, trim: true},
     published: {type: Boolean, default: false},
     deleted: {type: Boolean, default: false},
-    hidden: {type: Boolean, default: false}
+    hidden: {type: Boolean, default: false},
+    keywords: [{type: String}],
+    tags: [{type: String}]
 }, {timestamps: true});
 
 module.exports = {

@@ -5,15 +5,17 @@ var Schema = mongoose.Schema;
 
 var newsSchema = new Schema({
     title: {type: String, required: true, trim: true},
-    source: String,
-    cover: String,
-    article: String,
+    source: {type: String, required: true, trim: true},
+    cover: {type: String, required: true},
+    article: {type: String, required: true, trim: true},
+    summary: {type: String, trim: true},
     slug: {type: String, lowercase: true, trim: true, required: true, index: true, unique: true},
-    saves: Number,
-    views: Number,
-    published: Boolean,
-    deleted: Boolean,
-    hidden: Boolean
+    saves: {type: Number, default: 0},
+    views: {type: Number, default: 0},
+    date: {type: String, trim: true},
+    published: {type: Boolean, default: false},
+    deleted: {type: Boolean, default: false},
+    hidden: {type: Boolean, default: false}
 }, {timestamps: true});
 
 module.exports = {

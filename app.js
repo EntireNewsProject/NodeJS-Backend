@@ -9,8 +9,7 @@ var app = express();
 
 //new branch develop created. This branch is for Sif, Alex, and Khushal to work together on the backend
 //Local database connection
-var mongoDB = 'mongodb://127.0.0.1:27017/entirenews';
-mongoose.connect(mongoDB, {
+mongoose.connect('mongodb://EntireNewsApp:JNuhg6B7T8jhj8Y68KNKh@127.0.0.1:27569/entirenews?authSource=entirenews', {
     useMongoClient: true
 });
 

@@ -1,4 +1,4 @@
-# Python-Backend (Automated System)
+# NodeJS-Backend (API & Database System)
 ## Entire News (Android News App)
 
 ### Read [Readme]

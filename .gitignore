@@ -36,6 +36,7 @@ build/Release
 .idea/
 node_modules/
 jspm_packages/
+EntireNews.pem
 
 # Typescript v1 declaration files
 typings/

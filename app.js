@@ -9,8 +9,7 @@ var app = express();
 
 //new branch develop created. This branch is for Sif, Alex, and Khushal to work together on the backend
 //Local database connection
-var mongoDB = 'mongodb://127.0.0.1:27017';
-mongoose.connect(mongoDB, {
+mongoose.connect('mongodb://EntireNewsApp:JNuhg6B7T8jhj8Y68KNKh@127.0.0.1:27569/entirenews?authSource=entirenews', {
     useMongoClient: true
 });
 
@@ -30,10 +29,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', api);
 
 // catch 404 and forward to error handler
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
     var err = new Error('Not Found');
     err.status = 404;
-    next(err);
+    //next(err);
 });
 
 module.exports = app;

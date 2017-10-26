@@ -16,7 +16,8 @@ var createSlug = function (title) {
 router.route('/news')
     //this route will get the data from the data base and respond to the request with required fields
     .get(function (req, res) {
-        var page = req.query.page | 1;    //gets the query from the request
+        var page = Number(req.query.page) | 1;    //gets the query from the request
+        var NEXT_PAGE = (page-1) * MAX_LIMIT;   //used by skip for skipping the already loaded news
         var source = req.query.source;
         if (source) {
             //moduleNews.News.find({source: source}).limit(max_limit).skip(page * max_limit);
@@ -24,11 +25,10 @@ router.route('/news')
                 .find({published: true, deleted:false, source: source})
                 .sort({createdAt: -1})
                 .limit(MAX_LIMIT)
-                //.skip(page - 1 * MAX_LIMIT)
+                .skip(NEXT_PAGE)
                 .exec()
                 .then(function(result){
                     if (result) {
-
                         res.status(200).json(result);
                     }else
                         res.status(400).json({

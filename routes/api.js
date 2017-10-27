@@ -14,23 +14,23 @@ var createSlug = function (title) {
 };
 
 router.route('/news')
-    //this route will get the data from the data base and respond to the request with required fields
+//this route will get the data from the data base and respond to the request with required fields
     .get(function (req, res) {
-        var page = Number(req.query.page) | 1;    //gets the query from the request
-        var NEXT_PAGE = (page-1) * MAX_LIMIT;   //used by skip for skipping the already loaded news
+        var page = parseInt(req.query.page) || 1;  //used by skip for skipping the already loaded news
         var source = req.query.source;
         if (source) {
             //moduleNews.News.find({source: source}).limit(max_limit).skip(page * max_limit);
             moduleNews.News
-                .find({published: true, deleted:false, source: source})
+                .find({published: true, deleted: false, source: source})
                 .sort({createdAt: -1})
-                .limit(MAX_LIMIT)
-                .skip(NEXT_PAGE)
+                .limit(MAX_LIMIT)   //loads 12 news from database
+                .skip((page - 1) * MAX_LIMIT)    //skips already loaded news
+                .fields('title source cover slug url saves views date createdAt')
                 .exec()
-                .then(function(result){
+                .then(function (result) {
                     if (result) {
                         res.status(200).json(result);
-                    }else
+                    } else
                         res.status(400).json({
                             error: 'Internal server error'
                         });
@@ -79,7 +79,7 @@ router.route('/news')
             });
         }
     })
-    .delete(auth.isAuth, function (req, res){
+    .delete(auth.isAuth, function (req, res) {
         res.sendStatus();
     });
 

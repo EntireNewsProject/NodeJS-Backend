@@ -85,7 +85,29 @@ router.route('/news')
 
 router.route('/news/:id')
     .get(function (req, res) {
-        res.send({news: []});
+        var id = req.params.id;
+        if (id) {
+          moduleNews.News
+            .findOne({published: true, deleted: false, id: id})
+            .exec()
+            .then(function (result) {
+              if (result) {
+                res.status(200).json(result);
+              }
+              else {
+                res.status(400).json({
+                  Error: 'Internal Server Error'
+                });
+              }
+            })
+            .catch(function (err) {
+            });
+        }
+        else {
+          res.status(404).json({
+            Error: 'ID not provided'
+          });
+        }
     })
     .post(function (req, res) {
         res.sendStatus(201);

@@ -88,9 +88,11 @@ router.route('/news/:id')
         var id = req.params.id;
         if (id) {
           moduleNews.News
+            //this will find the specific news using the ID associated with it and return all fields
             .findOne({published: true, deleted: false, id: id})
             .exec()
             .then(function (result) {
+              //checks if result obtained and then return status 200 or return status 400
               if (result) {
                 res.status(200).json(result);
               }
@@ -103,6 +105,7 @@ router.route('/news/:id')
             .catch(function (err) {
             });
         }
+        //if ID not found then return status 404 with error message "Error: 'ID not provided'"
         else {
           res.status(404).json({
             Error: 'ID not provided'

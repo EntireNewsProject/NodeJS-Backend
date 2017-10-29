@@ -13,6 +13,10 @@ var createSlug = function (title) {
     return title;
 };
 
+var createSubtitle = function (article) {
+    return article.substring(0, 100).replace('\n', '').replace('\r', '');
+};
+
 router.route('/news')
 //this route will get the data from the data base and respond to the request with required fields
     .get(function (req, res) {
@@ -57,7 +61,10 @@ router.route('/news')
             params.title = req.body.title;
             params.source = req.body.source;
             if (req.body.cover) params.cover = req.body.cover;
-            if (req.body.article) params.article = req.body.article;
+            if (req.body.article) {
+                params.article = req.body.article;
+                params.subtitle = createSubtitle(params.article);
+            }
             if (req.body.url) params.url = req.body.url;
             params.slug = createSlug(params.title);
             params.published = true;

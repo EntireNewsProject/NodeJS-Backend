@@ -58,6 +58,7 @@ router.route('/news')
             params.source = req.body.source;
             if (req.body.cover) params.cover = req.body.cover;
             if (req.body.article) params.article = req.body.article;
+            if (req.body.url) params.url = req.body.url;
             params.slug = createSlug(params.title);
             params.published = true;
             params.deleted = false;

@@ -8,7 +8,7 @@ var newsSchema = new Schema({
     source: {type: String, required: true, trim: true},
     cover: {type: String, required: true},
     article: {type: String, required: true, trim: true},
-    subtitle: {type: String, trim: true}
+    subtitle: {type: String, trim: true},
     summary: {type: String, trim: true},
     slug: {type: String, lowercase: true, trim: true, required: true, index: true, unique: true},
     url: {type: String, required: true},

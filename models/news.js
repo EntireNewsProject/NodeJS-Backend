@@ -10,6 +10,7 @@ var newsSchema = new Schema({
     article: {type: String, required: true, trim: true},
     summary: {type: String, trim: true},
     slug: {type: String, lowercase: true, trim: true, required: true, index: true, unique: true},
+    url: {type: String, required: true},
     saves: {type: Number, default: 0},
     views: {type: Number, default: 0},
     date: {type: String, trim: true},

@@ -13,24 +13,28 @@ var createSlug = function (title) {
     return title;
 };
 
+var createSubtitle = function (article) {
+    return article.substring(0, 100).replace('\n', '').replace('\r', '');
+};
+
 router.route('/news')
-    //this route will get the data from the data base and respond to the request with required fields
+//this route will get the data from the data base and respond to the request with required fields
     .get(function (req, res) {
-        var page = req.query.page | 1;    //gets the query from the request
+        var page = parseInt(req.query.page) || 1;  //used by skip for skipping the already loaded news
         var source = req.query.source;
         if (source) {
             //moduleNews.News.find({source: source}).limit(max_limit).skip(page * max_limit);
             moduleNews.News
-                .find({published: true, deleted:false, source: source})
+                .find({published: true, deleted: false, source: source})
                 .sort({createdAt: -1})
-                .limit(MAX_LIMIT)
-                //.skip(page - 1 * MAX_LIMIT)
+                .limit(MAX_LIMIT)   //loads 12 news from database
+                .skip((page - 1) * MAX_LIMIT)    //skips already loaded news
+                .select('title source cover slug subtitle url saves views date createdAt')
                 .exec()
-                .then(function(result){
+                .then(function (result) {
                     if (result) {
-
                         res.status(200).json(result);
-                    }else
+                    } else
                         res.status(400).json({
                             error: 'Internal server error'
                         });
@@ -57,7 +61,11 @@ router.route('/news')
             params.title = req.body.title;
             params.source = req.body.source;
             if (req.body.cover) params.cover = req.body.cover;
-            if (req.body.article) params.article = req.body.article;
+            if (req.body.article) {
+                params.article = req.body.article;
+                params.subtitle = createSubtitle(params.article);
+            }
+            if (req.body.url) params.url = req.body.url;
             params.slug = createSlug(params.title);
             params.published = true;
             params.deleted = false;
@@ -79,13 +87,38 @@ router.route('/news')
             });
         }
     })
-    .delete(auth.isAuth, function (req, res){
+    .delete(auth.isAuth, function (req, res) {
         res.sendStatus();
     });
 
 router.route('/news/:id')
     .get(function (req, res) {
-        res.send({news: []});
+        var id = req.params.id;
+        if (id) {
+          moduleNews.News
+            //this will find the specific news using the ID associated with it and return all fields
+            .findById(id)
+            .exec()
+            .then(function (result) {
+              //checks if result obtained and then return status 200 or return status 400
+              if (result) {
+                res.status(200).json(result);
+              }
+              else {
+                res.status(400).json({
+                  Error: 'Internal Server Error'
+                });
+              }
+            })
+            .catch(function (err) {
+            });
+        }
+        //if ID not found then return status 404 with error message "Error: 'ID not provided'"
+        else {
+          res.status(404).json({
+            Error: 'ID not provided'
+          });
+        }
     })
     .post(function (req, res) {
         res.sendStatus(201);

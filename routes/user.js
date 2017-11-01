@@ -8,9 +8,10 @@ var mongoose = require('mongoose');
 mongoose.Promise = promise;
 
 router.route('/user')
-    .get(function (req, res) {
-        var username = req.user;
-        if (username) {
+    .get(function (req, res) {  //me
+        var username = req.body.username;
+        var password = req.body.password;
+        if (username && password) {
             moduleUser.User
                 .find({active: true, deleted: false, username:  username})
                 .exec()
@@ -32,7 +33,32 @@ router.route('/user')
             });
         }
     })
-    .post(function(req, res){
+    .post(function(req, res){ // register
+        if (req.body.email && req.body.password && req.body.unique(true)){
+            var params = {};
+            params.email = req.body.email;
+            params.password = req.body.password;
+            params.active = true;
+
+            var user = new moduleUser.User(params);
+            user.save(function (err) {
+                if (err)
+                    res.status(400).json({
+                        error: 'Internal server error'
+                    });
+                else
+                    res.status(201).json({
+                        msg: 'User created successfully'
+                    });
+            });
+        }
+        else{
+            res.status(401).json({
+                error: 'All information not provided'
+            });
+        }
+    })
+    .post(function(req, res){ // login
         if (req.body.email && req.body.password) {
             var params = {};
             params.email = req.body.email;
@@ -57,6 +83,7 @@ router.route('/user')
             });
         }
     })
+
     .delete(auth.isAuth, function(req, res){
         res.sendStatus();
     });

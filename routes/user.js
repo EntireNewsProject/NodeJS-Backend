@@ -70,8 +70,11 @@ router.route('/user')
             params.password = req.body.password;
             params.active = true;
 
-            var user = new moduleUser.User(params);
-            user.save(function (err) {
+            if (req.body.email) params.email = req.body.email;
+            if (req.body.password) params.password = req.body.password;
+
+            var user = moduleUser.User(params);
+            user.load(function (err) {
                 if (err)
                     res.status(400).json({
                         error: 'Internal server error'

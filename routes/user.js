@@ -10,10 +10,11 @@ mongoose.Promise = promise;
 router.route('/user')
     .get(function (req, res) {  //me
         var username = req.body.username;
-        var password = req.body.password;
-        if (username && password) {
+        var token; //TODO: find token
+        if (token) {
             moduleUser.User
                 .find({active: true, deleted: false, username:  username})
+                .select('username fullName')
                 .exec()
                 .then(function (result) {
                     if (result) {
@@ -29,7 +30,7 @@ router.route('/user')
         }
         else {
             res.status(404).json({
-                error: 'Username not found'
+                error: 'Token not found'
             });
         }
     })
@@ -73,7 +74,7 @@ router.route('/user')
                     });
                 else
                     res.status(201).json({
-                        msg: 'Item created successfully'
+                        msg: 'Login successful'
                     });
             });
         }

@@ -125,9 +125,6 @@ router.route('/news/:id')
               }
             })
             .catch(function (err) {
-                res.status(404).json({
-                    Error: 'Not Found'
-                });
             });
         }
         //if ID not found then return status 404 with error message "Error: 'ID not provided'"

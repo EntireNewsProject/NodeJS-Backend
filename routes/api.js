@@ -98,7 +98,7 @@ router.route('/news/:id')
             moduleNews.News
             //this will find the specific news using the ID associated with it and return all fields
             // .findById(id)
-                .findOneAndUpdate({id: id}, {$inc: {views: 1}}, {new: true})
+                .findOneAndUpdate({_id: id}, {$inc: {views: 1}}, {new: true})
                 .exec()
                 .then(function (result) {
                     console.log(result);

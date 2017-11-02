@@ -97,12 +97,25 @@ router.route('/news/:id')
         if (id) {
           moduleNews.News
             //this will find the specific news using the ID associated with it and return all fields
-            .findOneAndUpdate({id: id}, {$inc: {views: 1}})
             .findById(id)
+              // .findOneAndUpdate({id: id}, {$inc: {views: 1}})
             .exec()
             .then(function (result) {
               //checks if result obtained and then return status 200 or return status 400
               if (result) {
+                  var params = {};
+                  param.views = parseInt(result.body.views) + 1;
+                  var news = moduleNews.News(params);
+                  news.save(function(err) {
+                      if (err)
+                          res.status(400).json({
+                              error: 'Internal server error'
+                          });
+                      else
+                          res.status(201).json({
+                              msg: 'Views updated'
+                          });
+                  });
                   res.status(200).json(result);
               }
               else {
@@ -112,9 +125,9 @@ router.route('/news/:id')
               }
             })
             .catch(function (err) {
-                // res.status(404).json({
-                //     error: 'Not Found'
-                // });
+                res.status(404).json({
+                    Error: 'Not Found'
+                });
             });
         }
         //if ID not found then return status 404 with error message "Error: 'ID not provided'"

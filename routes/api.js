@@ -110,11 +110,11 @@ router.route('/news/:id')
                   Error: 'Internal Server Error'
                 });
               }
-            });
+            })
             .catch(function (err) {
-                res.status(404).json({
-                    error: 'Not Found'
-                });
+                // res.status(404).json({
+                //     error: 'Not Found'
+                // });
             });
         }
         //if ID not found then return status 404 with error message "Error: 'ID not provided'"

@@ -70,11 +70,44 @@ router.route('/user')
             params.password = req.body.password;
             params.active = true;
 
+            //todo: verfiy email and password from database
             if (req.body.email) params.email = req.body.email;
             if (req.body.password) params.password = req.body.password;
 
+            //todo: search user?
             var user = moduleUser.User(params);
-            user.load(function (err) {
+
+            user.findOne({ //look for user and give token
+                username: req.body.username
+            }, function (err, user) {
+                if(err) throw err;
+
+                if(!user) {
+                    res.json({success: false, message: 'User Not Found.'});
+                }
+                else if(user){
+                    if(user.password !== req.body.password){
+                        res.json({ success: false, message:'Wrong Password'});
+                    }
+                    else{
+                        const payload = {admin: user.admin}; //
+                        var token = jwt.sign(payload, app.get('secretOrKey'),{
+                            expiresInMinutes: 1440 //expires in 24 hours
+                        });
+
+                        res.json({
+                            success: true,
+                            message: 'Token successful',
+                            token: token
+                        });
+                    }
+
+
+
+            }
+
+            })
+            /*user.load(function (err) {
                 if (err)
                     res.status(400).json({
                         error: 'Internal server error'
@@ -83,7 +116,7 @@ router.route('/user')
                     res.status(201).json({
                         msg: 'Login successful'
                     });
-            });
+            });*/
         }
         else{
             res.status(401).json({

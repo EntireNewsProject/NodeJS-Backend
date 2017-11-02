@@ -35,11 +35,15 @@ router.route('/user')
         }
     })
     .post(function(req, res){ // register
-        if (req.body.email && req.body.password && req.body.unique(true)){
+        if (req.body.email && req.body.password){
             var params = {};
             params.email = req.body.email;
             params.password = req.body.password;
             params.active = true;
+
+            if (req.body.email) params.email = req.body.email;
+            if (req.body.password) params.password = req.body.password;
+            //TODO: Check for unique username and email
 
             var user = new moduleUser.User(params);
             user.save(function (err) {

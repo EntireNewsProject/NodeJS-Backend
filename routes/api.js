@@ -102,7 +102,20 @@ router.route('/news/:id')
             .then(function (result) {
               //checks if result obtained and then return status 200 or return status 400
               if (result) {
-                res.status(200).json(result);
+                  var params = {};
+                  param.views = result.body.views + 1;
+                  var news = moduleNews.News(params);
+                  news.save(function(err) {
+                      if (err)
+                          res.status(400).json({
+                              error: 'Internal server error'
+                          });
+                      else
+                          res.status(201).json({
+                              msg: 'Views updated'
+                          });
+                  });
+                  res.status(200).json(result);
               }
               else {
                 res.status(400).json({

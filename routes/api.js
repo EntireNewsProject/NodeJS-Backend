@@ -95,29 +95,29 @@ router.route('/news/:id')
     .get(function (req, res) {
         var id = req.params.id;
         if (id) {
-          moduleNews.News
+            moduleNews.News
             //this will find the specific news using the ID associated with it and return all fields
-            .findById(id)
-            .exec()
-            .then(function (result) {
-              //checks if result obtained and then return status 200 or return status 400
-              if (result) {
-                res.status(200).json(result);
-              }
-              else {
-                res.status(400).json({
-                  Error: 'Internal Server Error'
+                .findOneAndUpdate({_id: id}, {$inc: {views: 1}}, {new: true})
+                .exec()
+                .then(function (result) {
+                    //checks if result obtained and then return status 200 or return status 400
+                    if (result) {
+                        res.status(200).json(result);
+                    }
+                    else {
+                        res.status(400).json({
+                            Error: 'Internal Server Error'
+                        });
+                    }
+                })
+                .catch(function (err) {
                 });
-              }
-            })
-            .catch(function (err) {
-            });
         }
         //if ID not found then return status 404 with error message "Error: 'ID not provided'"
         else {
-          res.status(404).json({
-            Error: 'ID not provided'
-          });
+            res.status(404).json({
+                Error: 'ID not provided'
+            });
         }
     })
     .post(function (req, res) {

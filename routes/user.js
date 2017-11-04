@@ -4,6 +4,8 @@ var router = express.Router();
 var promise = require('bluebird');
 var auth = require('../config/auth');
 var mongoose = require('mongoose');
+var jwt = require("passport-jwt").Strategy;
+var app = express();
 
 mongoose.Promise = promise;
 
@@ -63,18 +65,16 @@ router.route('/user')
             });
         }
     })
-    .post(function(req, res){ // login
+    .post('/passport', function(req, res){ // login
         if (req.body.email && req.body.password) {
             var params = {};
             params.email = req.body.email;
             params.password = req.body.password;
             params.active = true;
 
-            //todo: verfiy email and password from database
             if (req.body.email) params.email = req.body.email;
             if (req.body.password) params.password = req.body.password;
 
-            //todo: search user?
             var user = moduleUser.User(params);
 
             user.findOne({ //look for user and give token
@@ -90,8 +90,7 @@ router.route('/user')
                         res.json({ success: false, message:'Wrong Password'});
                     }
                     else{
-                        const payload = {admin: user.admin}; //
-                        var token = jwt.sign(payload, app.get('secretOrKey'),{
+                        var token = 'JWT '+ jwt.sign(user, app.get('secretOrKey'),{
                             expiresInMinutes: 1440 //expires in 24 hours
                         });
 

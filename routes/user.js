@@ -10,10 +10,25 @@ var app = express();
 mongoose.Promise = promise;
 
 router.route('/user')
-    .get(function (req, res) {  //me
+    .get(function (req, res, next) {  //me
         var username = req.body.username;
-        var token; //TODO: find token
+
+        //route middleware to verify token
+
+        // check header or url parameters or post parameters for token
+        var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+        //decode token
         if (token) {
+            jwt.Strategy(token, app.get('secretOrToken'), function (err, decoded) {
+                if(err){
+                    return res.json({success: false, message: 'Failed to authenticate token.'});
+                }
+                else{
+                    req.decoded = decoded;
+                    next();
+                }
+            });
             moduleUser.User
                 .find({active: true, deleted: false, username:  username})
                 .select('username fullName')
@@ -65,33 +80,28 @@ router.route('/user')
             });
         }
     })
-    .post('/passport', function(req, res){ // login
+    .post(function(req, res){ // login
         if (req.body.email && req.body.password) {
             var params = {};
             params.email = req.body.email;
             params.password = req.body.password;
             params.active = true;
 
-            if (req.body.email) params.email = req.body.email;
-            if (req.body.password) params.password = req.body.password;
-
             var user = moduleUser.User(params);
 
             user.findOne({ //look for user and give token
                 username: req.body.username
             }, function (err, user) {
-                if(err) throw err;
-
                 if(!user) {
                     res.json({success: false, message: 'User Not Found.'});
                 }
-                else if(user){
+                else {
                     if(user.password !== req.body.password){
                         res.json({ success: false, message:'Wrong Password'});
                     }
                     else{
                         var token = 'JWT '+ jwt.sign(user, app.get('secretOrKey'),{
-                            expiresInMinutes: 1440 //expires in 24 hours
+                            expiresInMinutes: 10080 //expires in 7 days
                         });
 
                         res.json({
@@ -100,10 +110,8 @@ router.route('/user')
                             token: token
                         });
                     }
-
-
-
             }
+
 
             })
             /*user.load(function (err) {

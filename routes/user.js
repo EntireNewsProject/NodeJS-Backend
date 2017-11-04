@@ -4,6 +4,8 @@ var router = express.Router();
 var promise = require('bluebird');
 var auth = require('../config/auth');
 var mongoose = require('mongoose');
+var jwt = require("passport-jwt").Strategy;
+var app = express();
 
 mongoose.Promise = promise;
 
@@ -63,15 +65,48 @@ router.route('/user')
             });
         }
     })
-    .post(function(req, res){ // login
+    .post('/passport', function(req, res){ // login
         if (req.body.email && req.body.password) {
             var params = {};
             params.email = req.body.email;
             params.password = req.body.password;
             params.active = true;
 
-            var user = new moduleUser.User(params);
-            user.save(function (err) {
+            if (req.body.email) params.email = req.body.email;
+            if (req.body.password) params.password = req.body.password;
+
+            var user = moduleUser.User(params);
+
+            user.findOne({ //look for user and give token
+                username: req.body.username
+            }, function (err, user) {
+                if(err) throw err;
+
+                if(!user) {
+                    res.json({success: false, message: 'User Not Found.'});
+                }
+                else if(user){
+                    if(user.password !== req.body.password){
+                        res.json({ success: false, message:'Wrong Password'});
+                    }
+                    else{
+                        var token = 'JWT '+ jwt.sign(user, app.get('secretOrKey'),{
+                            expiresInMinutes: 1440 //expires in 24 hours
+                        });
+
+                        res.json({
+                            success: true,
+                            message: 'Token successful',
+                            token: token
+                        });
+                    }
+
+
+
+            }
+
+            })
+            /*user.load(function (err) {
                 if (err)
                     res.status(400).json({
                         error: 'Internal server error'
@@ -80,7 +115,7 @@ router.route('/user')
                     res.status(201).json({
                         msg: 'Login successful'
                     });
-            });
+            });*/
         }
         else{
             res.status(401).json({

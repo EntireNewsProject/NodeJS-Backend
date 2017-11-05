@@ -82,8 +82,10 @@ router.route('/user')
                 error: 'All information not provided'
             });
         }
-    })
-    //ME route
+    });
+
+router.route('/user/me')
+//ME route
     .get(function (req, res, next) {
         var username = req.body.username;
 
@@ -124,17 +126,6 @@ router.route('/user')
                 error: 'Token not found'
             });
         }
-    })
-
-    .delete(auth.isAuth, function(req, res){
-        res.sendStatus();
     });
 
-router.route('/user/:id')
-    .get(function(req, res){
-        res.send({user: []});
-    })
-    .post(function(req, res){
-        res.sendStatus(201);
-    });
 module.exports = router;

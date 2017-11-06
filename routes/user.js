@@ -35,16 +35,6 @@ router.route('/user')
                             });
                         }
                     })
-            /*user.load(function (err) {
-                if (err)
-                    res.status(400).json({
-                        error: 'Internal server error'
-                    });
-                else
-                    res.status(201).json({
-                        msg: 'Login successful'
-                    });
-            });*/
         }
         else{
             res.status(401).json({
@@ -60,10 +50,6 @@ router.route('/user')
             params.email = req.body.email;
             params.password = req.body.password;
             params.active = true;
-
-            if (req.body.email) params.email = req.body.email;
-            if (req.body.password) params.password = req.body.password;
-            //TODO: Check for unique username and email
 
             var user = new moduleUser.User(params);
             user.save(function (err) {

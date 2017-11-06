@@ -45,11 +45,16 @@ router.route('/user')
 
     //Register route
     .post(function(req, res){
-        if (req.body.email && req.body.password){
+        if (req.body.username && req.body.email && req.body.password){
             var params = {};
+            params.username = req.body.username;
             params.email = req.body.email;
             params.password = req.body.password;
+            params.type = req.body.type;
+            params.fullName =req.body.fullName;
             params.active = true;
+
+            //TODO:Check unique username & email
 
             var user = new moduleUser.User(params);
             user.save(function (err) {
@@ -57,10 +62,11 @@ router.route('/user')
                     res.status(400).json({
                         error: 'Internal server error'
                     });
-                else
+                else { //TODO: set unique username and email to false
                     res.status(201).json({
                         msg: 'User created successfully'
                     });
+                }
             });
         }
         else{

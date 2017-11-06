@@ -46,7 +46,7 @@ router.route('/user')
     //Register route
     .post(function(req, res){
         if (req.body.username && req.body.email && req.body.password){
-            if(req.body.username.unique === false || req.body.email.unique === false) { //Check unique username and email
+            if(req.body.username.unique === true || req.body.email.unique === true) { //Check unique username and email
                 var params = {};
                 params.username = req.body.username;
                 params.email = req.body.email;
@@ -62,10 +62,12 @@ router.route('/user')
                     res.status(400).json({
                         error: 'Internal server error'
                     });
-                else { //TODO: set unique username and email to false
+                else {
                     res.status(201).json({
                         msg: 'User created successfully'
                     });
+                    params.username.unique = false;
+                    params.email.unique = false;
                 }
             });
         }

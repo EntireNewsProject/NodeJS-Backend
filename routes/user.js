@@ -46,15 +46,15 @@ router.route('/user')
     //Register route
     .post(function(req, res){
         if (req.body.username && req.body.email && req.body.password){
-            var params = {};
-            params.username = req.body.username;
-            params.email = req.body.email;
-            params.password = req.body.password;
-            params.type = req.body.type;
-            params.fullName =req.body.fullName;
-            params.active = true;
-
-            //TODO:Check unique username & email
+            if(req.body.username.unique === false || req.body.email.unique === false) { //Check unique username and email
+                var params = {};
+                params.username = req.body.username;
+                params.email = req.body.email;
+                params.password = req.body.password;
+                params.type = req.body.type;
+                params.fullName = req.body.fullName;
+                params.active = true;
+            }
 
             var user = new moduleUser.User(params);
             user.save(function (err) {

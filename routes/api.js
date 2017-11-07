@@ -124,4 +124,29 @@ router.route('/news/:id')
         res.sendStatus(201);
     });
 
+router.route('/news/save')
+    .post(function(req, res) {
+        var id = req.param.id;
+        if (id) {
+            moduleNews.News
+                .findOneAndUpdate({_id: id}, {$inc: {saves: 1}}, {new: true})
+                .exec()
+                .then(function (result) {
+                    if (result) {
+                        res.status(200).json('Saved')
+                    }
+                    else {
+                        res.status(400).json({
+                            Error: 'Internal Server Error'
+                        });
+                    }
+                })
+        }
+        else {
+            res.status(404).json({
+                Error: 'ID not provided'
+            });
+        }
+    });
+
 module.exports = router;

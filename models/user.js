@@ -2,6 +2,7 @@
 //this model can be used to write data to the database
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var uniqueValidator = require('mongoose-unique-validator');
 
 var userSchema = new Schema({
     username: {type: String, required: true, trim: true, unique: true},
@@ -11,6 +12,8 @@ var userSchema = new Schema({
     fullName: {type: String, trim: true},
     active: {type: Boolean, default: false}
 }, {timestamps: true});
+
+userSchema.plugin(uniqueValidator);
 
 module.exports = {
     User: mongoose.model('User', userSchema)

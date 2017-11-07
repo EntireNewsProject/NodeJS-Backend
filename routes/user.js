@@ -56,10 +56,12 @@ router.route('/user')
 
             var user = new moduleUser.User(params);
             user.save(function (err) {
-                if (err)
+                if (err) {
                     res.status(400).json({
                         error: 'Internal server error'
                     });
+                    console.log(err);
+                }
                 else {
                     res.status(201).json({
                         msg: 'User created successfully'

@@ -124,7 +124,7 @@ router.route('/news/:id')
         res.sendStatus(201);
     });
 
-router.route('/news/id/save')
+router.route('/news/:id/save')
     .post(function(req, res) {
         var id = req.param.id;
         if (id) {

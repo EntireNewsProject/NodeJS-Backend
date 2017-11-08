@@ -126,8 +126,7 @@ router.route('/news/:id')
 
 router.route('/news/:id/save')
     .get(function(req, res) {
-        var id = req.param.id;
-        console.log(id);
+        var id = req.params.id;
         if (id) {
             moduleNews.News
                 .findOneAndUpdate({_id: id}, {$inc: {saves: 1}}, {new: true})

@@ -125,7 +125,7 @@ router.route('/news/:id')
     });
 
 router.route('/news/:id/save')
-    .post(function(req, res) {
+    .get(function(req, res) {
         var id = req.param.id;
         console.log(id);
         if (id) {

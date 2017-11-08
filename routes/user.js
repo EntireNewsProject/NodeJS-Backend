@@ -9,8 +9,8 @@ var app = express();
 
 mongoose.Promise = promise;
 
-router.route('/user')
-    //Login route
+router.route('/login')
+//Login route
     .get(function(req, res){
         if ((req.body.email || req.body.username) && req.body.password) {
             moduleUser.User.findOne({or: [
@@ -41,9 +41,9 @@ router.route('/user')
                 error: 'All information not provided'
             });
         }
-    })
-
-    //Register route
+    });
+router.route('/register')
+//Register route
     .post(function(req, res){
         if (req.body.username && req.body.email && req.body.password){
                 var params = {};
@@ -75,8 +75,7 @@ router.route('/user')
             });
         }
     });
-
-router.route('/user/me')
+router.route('/me')
 //ME route
     .get(function (req, res, next) {
         var username = req.body.username;

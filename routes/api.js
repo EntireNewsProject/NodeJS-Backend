@@ -27,8 +27,8 @@ router.route('/news')
             moduleNews.News
                 .find({published: true, deleted: false, source: source})
                 .sort({createdAt: -1})
-                .limit(MAX_LIMIT)   //loads 12 news from database
                 .skip(page * MAX_LIMIT)    //skips already loaded news
+                .limit(MAX_LIMIT)   //loads 12 news from database
                 .select('title source cover slug subtitle url saves views date createdAt')
                 .exec()
                 .then(function (result) {

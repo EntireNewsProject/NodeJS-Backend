@@ -20,14 +20,14 @@ var createSubtitle = function (article) {
 router.route('/news')
 //this route will get the data from the data base and respond to the request with required fields
     .get(function (req, res) {
-        var page = parseInt(req.query.page) || 1;  //used by skip for skipping the already loaded news
+        var page = parseInt(req.query.page) || 0;  //used by skip for skipping the already loaded news
         var source = req.query.source;
         if (source) {
             //moduleNews.News.find({source: source}).limit(max_limit).skip(page * max_limit);
             moduleNews.News
                 .find({published: true, deleted: false, source: source})
                 .sort({createdAt: -1})
-                .skip((page-1) * MAX_LIMIT)    //skips already loaded news
+                .skip(page * MAX_LIMIT)    //skips already loaded news
                 .limit(MAX_LIMIT)   //loads 12 news from database
                 .select('title source cover slug subtitle url saves views date createdAt')
                 .exec()

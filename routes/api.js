@@ -21,6 +21,8 @@ router.route('/news')
 //this route will get the data from the data base and respond to the request with required fields
     .get(function (req, res) {
         var page = Math.max(0, parseInt(req.query.page));  //used by skip for skipping the already loaded news
+        if (page <= 1)
+            page = 1;
         var source = req.query.source;
         if (source) {
             //moduleNews.News.find({source: source}).limit(max_limit).skip(page * max_limit);

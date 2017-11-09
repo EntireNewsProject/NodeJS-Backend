@@ -133,9 +133,8 @@ router.route('/news/:id/save')
                 .exec()
                 .then(function (result) {
                     if (result) {
-                        res.status(200).json('Saved')
-                    }
-                    else {
+                        res.status(200).json(result)
+                    } else {
                         res.status(400).json({
                             Error: 'Internal Server Error'
                         });

@@ -44,7 +44,7 @@ router.route('/login')
 router.route('/register')
 //Register route
     .post(function(req, res){
-        if (req.body.username && req.body.email && req.body.password){
+        if (req.body.username && req.body.email && req.body.password && req.body.fullName){
                 var params = {};
                 params.username = req.body.username;
                 params.email = req.body.email;

@@ -13,9 +13,9 @@ router.route('/login')
 //Login route
     .get(function(req, res){
         if ((req.body.email || req.body.username) && req.body.password) {
-            moduleUser.User.findOne({or: [
+            moduleUser.User.findOne({or: [ //look for user and give token
                 { username: req.body.username},
-                { email: req.body.email}//look for user and give token
+                { email: req.body.email}
             ], password: req.body.password})
                 .exec()
                 .then(
@@ -78,12 +78,9 @@ router.route('/me')
 //ME route
     .get(function (req, res, next) {
         var username = req.body.username;
-
         //route middleware to verify token
-
         // check header or url parameters or post parameters for token
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
         //decode token
         if (token) {
             jwt.Strategy(token, app.get('secretOrToken'), function (err, decoded) {
@@ -97,7 +94,7 @@ router.route('/me')
             });
             moduleUser.User
                 .find({active: true, deleted: false, username:  username})
-                .select('username fullName')
+                .select('username email type fullName active')
                 .exec()
                 .then(function (result) {
                     if (result) {

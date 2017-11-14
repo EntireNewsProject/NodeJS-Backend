@@ -77,6 +77,7 @@ router.route('/register')
 router.route('/me')
 //ME route
     .get(function (req, res, next) {
+        var username = req.body.username;
         //route middleware to verify token
         // check header or url parameters or post parameters for token
         var token = req.body.token || req.query.token || req.headers['x-access-token'];

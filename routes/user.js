@@ -27,7 +27,6 @@ router.route('/login')
                             var token = 'JWT '+ jwt.sign(user, app.get('secretOrKey'),{
                                 expiresInMinutes: 10080 //expires in 7 days
                             });
-
                             res.json({
                                 success: true,
                                 message: 'Token successful',

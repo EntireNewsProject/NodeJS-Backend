@@ -4,8 +4,14 @@ var router = express.Router();
 var promise = require('bluebird');
 var auth = require('../config/auth');
 var mongoose = require('mongoose');
-var jwt = require("passport-jwt").Strategy;
+var JwtStrategy = require("passport-jwt").Strategy;
+var ExtractJwt = require("passport-jwt").ExtractJwt;
 var app = express();
+
+var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = 'secret';
+
 
 mongoose.Promise = promise;
 

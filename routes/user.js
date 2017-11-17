@@ -4,8 +4,14 @@ var router = express.Router();
 var promise = require('bluebird');
 var auth = require('../config/auth');
 var mongoose = require('mongoose');
-var jwt = require("passport-jwt").Strategy;
+var JwtStrategy = require("passport-jwt").Strategy;
+var ExtractJwt = require("passport-jwt").ExtractJwt;
 var app = express();
+
+var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = 'secret';
+
 
 mongoose.Promise = promise;
 
@@ -24,7 +30,7 @@ router.route('/login')
                             res.json({success: false, message: 'Please enter valid login details'});
                         }
                         else {
-                            var token = 'JWT '+ jwt.sign(user, app.get('secretOrKey'),{
+                            var token = 'JWT '+ JwtStrategy.JwtVerifier(user, app.route('secretOrKey'),{
                                 expiresInMinutes: 10080 //expires in 7 days
                             });
                             res.json({
@@ -44,7 +50,7 @@ router.route('/login')
 router.route('/register')
 //Register route
     .post(function(req, res){
-        if (req.body.username && req.body.email && req.body.password){
+        if (req.body.username && req.body.email && req.body.password && req.body.fullName){
                 var params = {};
                 params.username = req.body.username;
                 params.email = req.body.email;
@@ -83,7 +89,7 @@ router.route('/me')
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
         //decode token
         if (token) {
-            jwt.Strategy(token, app.get('secretOrToken'), function (err, decoded) {
+            JwtStrategy.JwtVerifier(token, app.route('secretOrToken'), function (err, decoded) {
                 if(err){
                     return res.json({success: false, message: 'Failed to authenticate token.'});
                 }

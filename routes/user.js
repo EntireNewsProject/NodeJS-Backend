@@ -30,7 +30,7 @@ router.route('/login')
                             res.json({success: false, message: 'Please enter valid login details'});
                         }
                         else {
-                            var token = 'JWT '+ jwt.sign(user, app.get('secretOrKey'),{
+                            var token = 'JWT '+ JwtStrategy.JwtVerifier(user, app.route('secretOrKey'),{
                                 expiresInMinutes: 10080 //expires in 7 days
                             });
                             res.json({
@@ -89,7 +89,7 @@ router.route('/me')
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
         //decode token
         if (token) {
-            jwt.Strategy(token, app.get('secretOrToken'), function (err, decoded) {
+            JwtStrategy.JwtVerifier(token, app.route('secretOrToken'), function (err, decoded) {
                 if(err){
                     return res.json({success: false, message: 'Failed to authenticate token.'});
                 }

@@ -164,6 +164,7 @@ router.route('/news/:id/save')
                 res.status(404).json({
                     Error: 'ID not provided'
                 });
+            }
         }
     });
 

@@ -7,7 +7,7 @@ var mongoose = require('mongoose');
 var api = require('./routes/api');
 var app = express();
 
-mongoose.connect('mongodb://EntireNewsApp:JNuhg6B7T8jhj8Y68KNKh@127.0.0.1:27569/entirenews?authSource=entirenews', {
+mongoose.connect('mongodb://EntireNewsApp:Js3dgK5sdg7BHJIsdGH89JdKsd9fB0@127.0.0.1:27569/entirenews?authSource=entirenews', {
     useMongoClient: true
 });
 

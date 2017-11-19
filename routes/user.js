@@ -11,32 +11,33 @@ mongoose.Promise = promise;
 
 router.route('/login')
 //Login route
-    .get(function(req, res){
+    .get(function (req, res) {
         if ((req.body.email || req.body.username) && req.body.password) {
-            moduleUser.User.findOne({or: [
-                { username: req.body.username},
-                { email: req.body.email}//look for user and give token
-            ], password: req.body.password})
+            moduleUser.User.findOne({
+                or: [
+                    {username: req.body.username},
+                    {email: req.body.email} //look for user and give token
+                ], password: req.body.password
+            })
                 .exec()
                 .then(
                     function (result) {
-                        if(!result) {
+                        if (!result) {
                             res.json({success: false, message: 'Please enter valid login details'});
-                        }
-                        else {
-                            var token = 'JWT '+ jwt.sign(user, app.get('secretOrKey'),{
+                        } else {
+                            // TODO wrong
+                            var token = 'JWT ' + jwt.sign(user, app.get('secretOrKey'), {
                                 expiresInMinutes: 10080 //expires in 7 days
                             });
-
                             res.json({
                                 success: true,
-                                message: 'Token successful',
+                                message: 'Login successful',
                                 token: token
                             });
                         }
                     })
         }
-        else{
+        else {
             res.status(401).json({
                 error: 'All information not provided'
             });
@@ -44,16 +45,14 @@ router.route('/login')
     });
 router.route('/register')
 //Register route
-    .post(function(req, res){
-        if (req.body.username && req.body.email && req.body.password){
-                var params = {};
-                params.username = req.body.username;
-                params.email = req.body.email;
-                params.password = req.body.password;
-                params.type = req.body.type;
-                params.fullName = req.body.fullName;
-                params.active = true;
-
+    .post(function (req, res) {
+        if (req.body.username && req.body.email && req.body.password) {
+            var params = {};
+            params.username = req.body.username;
+            params.email = req.body.email;
+            params.password = req.body.password;
+            if (params.fullName) params.fullName = req.body.fullName;
+            params.active = true;
             var user = new moduleUser.User(params);
             user.save(function (err) {
                 if (err) {
@@ -61,15 +60,14 @@ router.route('/register')
                         error: 'Internal server error'
                     });
                     console.log(err);
-                }
-                else {
+                } else {
                     res.status(201).json({
                         msg: 'User created successfully'
                     });
                 }
             });
         }
-        else{
+        else {
             res.status(401).json({
                 error: 'All information not provided'
             });
@@ -88,16 +86,15 @@ router.route('/me')
         //decode token
         if (token) {
             jwt.Strategy(token, app.get('secretOrToken'), function (err, decoded) {
-                if(err){
+                if (err) {
                     return res.json({success: false, message: 'Failed to authenticate token.'});
-                }
-                else{
+                } else {
                     req.decoded = decoded;
                     next();
                 }
             });
             moduleUser.User
-                .find({active: true, deleted: false, username:  username})
+                .find({active: true, deleted: false, username: username})
                 .select('username fullName')
                 .exec()
                 .then(function (result) {

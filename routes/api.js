@@ -125,25 +125,45 @@ router.route('/news/:id')
 
 router.route('/news/:id/save')
     .get(function (req, res) {
+        var savecheck = req.query.savecheck;
         var id = req.params.id;
-        if (id) {
-            moduleNews.News
-                .findOneAndUpdate({_id: id}, {$inc: {saves: 1}}, {new: true})
-                .exec()
-                .then(function (result) {
-                    if (result) {
-                        res.status(200).json(result)
-                    } else {
-                        res.status(400).json({
-                            Error: 'Internal Server Error'
-                        });
-                    }
-                })
-        }
-        else {
-            res.status(404).json({
-                Error: 'ID not provided'
-            });
+        if (savecheck === 'true') {
+            if (id) {
+                moduleNews.News
+                    .findOneAndUpdate({_id: id}, {$inc: {saves: 1}}, {new: true})
+                    .exec()
+                    .then(function (result) {
+                        if (result) {
+                            res.status(200).json(result)
+                        } else {
+                            res.status(400).json({
+                                Error: 'Internal Server Error'
+                            });
+                        }
+                    })
+            } else {
+                res.status(404).json({
+                    Error: 'ID not provided'
+                });
+            }
+        } else if(savecheck === 'false') {
+            if (id) {
+                moduleNews.News
+                    .findOneAndUpdate({_id: id}, {$inc: {saves: -1}}, {new: true})
+                    .exec()
+                    .then(function (result) {
+                        if (result) {
+                            res.status(200).json(result)
+                        } else {
+                            res.status(400).json({
+                                Error: 'Internal Server Error'
+                            });
+                        }
+                    })
+            } else {
+                res.status(404).json({
+                    Error: 'ID not provided'
+                });
         }
     });
 

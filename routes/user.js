@@ -4,8 +4,14 @@ var router = express.Router();
 var promise = require('bluebird');
 var auth = require('../config/auth');
 var mongoose = require('mongoose');
-var jwt = require("passport-jwt").Strategy;
+var JwtStrategy = require("passport-jwt").Strategy;
+var ExtractJwt = require("passport-jwt").ExtractJwt;
 var app = express();
+
+var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = 'secret';
+
 
 mongoose.Promise = promise;
 
@@ -13,20 +19,18 @@ router.route('/login')
 //Login route
     .get(function (req, res) {
         if ((req.body.email || req.body.username) && req.body.password) {
-            moduleUser.User.findOne({
-                or: [
-                    {username: req.body.username},
-                    {email: req.body.email} //look for user and give token
-                ], password: req.body.password
-            })
+            moduleUser.User.findOne({or: [ //look for user and give token
+                { username: req.body.username},
+                { email: req.body.email}
+            ], password: req.body.password})
                 .exec()
                 .then(
                     function (result) {
                         if (!result) {
                             res.json({success: false, message: 'Please enter valid login details'});
-                        } else {
-                            // TODO wrong
-                            var token = 'JWT ' + jwt.sign(user, app.get('secretOrKey'), {
+                        }
+                        else {
+                            var token = 'JWT '+ JwtStrategy.JwtVerifier(user, app.route('secretOrKey'),{
                                 expiresInMinutes: 10080 //expires in 7 days
                             });
                             res.json({
@@ -77,16 +81,13 @@ router.route('/me')
 //ME route
     .get(function (req, res, next) {
         var username = req.body.username;
-
         //route middleware to verify token
-
         // check header or url parameters or post parameters for token
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
         //decode token
         if (token) {
-            jwt.Strategy(token, app.get('secretOrToken'), function (err, decoded) {
-                if (err) {
+            JwtStrategy.JwtVerifier(token, app.route('secretOrToken'), function (err, decoded) {
+                if(err){
                     return res.json({success: false, message: 'Failed to authenticate token.'});
                 } else {
                     req.decoded = decoded;
@@ -94,8 +95,8 @@ router.route('/me')
                 }
             });
             moduleUser.User
-                .find({active: true, deleted: false, username: username})
-                .select('username fullName')
+                .find({active: true, deleted: false, username:  username})
+                .select('username email type fullName active')
                 .exec()
                 .then(function (result) {
                     if (result) {

@@ -10,7 +10,7 @@ mongoose.Promise = promise;
 var MAX_LIMIT = 12;
 
 var createSlug = function (title) {
-    return title;
+    return title.replace('\r', '-').replace(' ', '-').toLowerCase();
 };
 
 var createSubtitle = function (article) {
@@ -23,7 +23,6 @@ router.route('/news')
         var page = Math.max(1, parseInt(req.query.page));  //used by skip for skipping the already loaded news
         var source = req.query.source;
         if (source) {
-            //moduleNews.News.find({source: source}).limit(max_limit).skip(page * max_limit);
             moduleNews.News
                 .find({published: true, deleted: false, source: source})
                 .sort({createdAt: -1})

@@ -10,7 +10,7 @@ mongoose.Promise = promise;
 var MAX_LIMIT = 12;
 
 var createSlug = function (title) {
-    return title.replace('\r', '\-').replace(' ', '\-').toLowerCase();
+    return title.replace('\r', '\-').replace(' ', '\-').replace('\n', '\-').replace('\n\r', '\-').toLowerCase();
 };
 
 var createSubtitle = function (article) {

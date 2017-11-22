@@ -5,9 +5,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var api = require('./routes/api');
+var user = require('./routes/user');
 var app = express();
 
-mongoose.connect('mongodb://EntireNewsApp:Js3dgK5sdg7BHJIsdGH89JdKsd9fB0@127.0.0.1:27569/entirenews?authSource=entirenews', {
+// mongoose.connect('mongodb://EntireNewsApp:Js3dgK5sdg7BHJIsdGH89JdKsd9fB0@127.0.0.1:27569/entirenews?authSource=entirenews', {
+    mongoose.connect('mongodb://127.0.0.1:27017', {
     useMongoClient: true
 });
 
@@ -25,7 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', api);
-// app.use('/user', user);
+app.use('/user', user);
 
 // catch 404 and forward to error handler
 app.use(function (err, req, res) {

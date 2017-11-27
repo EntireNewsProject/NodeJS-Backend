@@ -10,11 +10,11 @@ mongoose.Promise = promise;
 var MAX_LIMIT = 12;
 
 var createSlug = function (title) {
-    return title.replace('\r', '\-').replace(' ', '\-').replace('\n', '\-').replace('\n\r', '\-').toLowerCase();
+    return title.replace(/[^\w\s]/gi, '').trim().toLowerCase().replace(/\W+/g, '-');
 };
 
 var createSubtitle = function (article) {
-    return article.substring(0, 128).replace('\n\r', ' ').replace('\n', ' ').replace('\r', ' ');
+    return article.substring(0, 200).replace(/\r?\n|\r/g, '').trim();
 };
 
 router.route('/news')

@@ -4,6 +4,7 @@ var router = express.Router();
 var promise = require('bluebird');
 var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
+var authHelpers = require('../config/auth');
 var cfg = require("../config/settings.js");
 
 mongoose.Promise = promise;
@@ -18,14 +19,13 @@ router.post('/login', function (req, res) {
             .exec()
             .then(function (user) {
                 if (user) {
-                    //console.log(user);
                     user.password = 'password';
                     res.json({
                         user: user,
                         success: true,
                         message: 'Login successful',
-                        //token: 'JWT ' + jwt.sign(user.toObject(), cfg.jwtSecret, {expiresIn: '14 days'})
-                        token: jwt.sign(user.toObject(), cfg.jwtSecret, {expiresIn: '14 days'})
+                        token: 'Bearer ' + jwt.sign(user.toObject(), cfg.jwtSecret, {expiresIn: '14 days'})
+                        //token: jwt.sign(user.toObject(), cfg.jwtSecret, {expiresIn: '14 days'})
                     });
                 } else {
                     res.json({
@@ -79,25 +79,13 @@ router.post('/register', function (req, res) {
     }
 });
 
-router.get('/authenticate', function (req, res) {
-    jwt.verify(req.headers.authorization, cfg.jwtSecret, function (err, result) {
-        if (result) {
-            delete result.iat;
-            delete result.exp;
-            res.json({
-                success: true,
-                authenticated: true,
-                message: 'You is logged in.',
-                token: jwt.sign(result, cfg.jwtSecret, {expiresIn: '14 days'}),
-                user: result
-            });
-        }
-        else
-            res.json({
-                success: false,
-                authenticated: false,
-                message: 'Please login again.'
-            });
+router.get('/authenticate', authHelpers.isAuthUser, function (req, res) {
+    res.status(200).json({
+        user: req.user,
+        success: true,
+        authenticated: true,
+        message: "Successfully logged in",
+        token: 'Bearer ' + jwt.sign(req.user.toObject(), cfg.jwtSecret, {expiresIn: '14 days'})
     });
 });
 

@@ -15,8 +15,7 @@ passport.use(new JwtStrategy({
         secretOrKey: cfg.jwtSecret,
         jwtFromRequest: JwtExtract.fromAuthHeaderAsBearerToken()
     }, function (payload, done) {
-        console.log("Auth : JwtStrategy");
-        moduleUser.User.findById(payload._doc._id)
+        moduleUser.User.findById(payload._id)
             .exec()
             .then(function (user) {
                     if (user) done(null, user);

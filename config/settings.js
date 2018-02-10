@@ -1,4 +1,5 @@
 module.exports = {
+    userFields: 'username email password type fullName profilePic',
     jwtSecret: "=SW$#%UjkA&*)BGFyuQW~!FIJ:SDG+",
     jwtSession: {session: false},
     database: 'mongodb://EntireNewsApp:Js3dgK5sdg7BHJIsdGH89JdKsd9fB0@127.0.0.1:27569/entirenews?authSource=entirenews',

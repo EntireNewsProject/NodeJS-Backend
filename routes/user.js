@@ -52,6 +52,7 @@ router.post('/login', function (req, res) {
 router.post('/register', function (req, res) {
     //console.log(req.body);
     if (req.body.username && req.body.email && req.body.password) {
+        //TODO check for illegal user names
         var params = {};
         params.username = req.body.username;
         params.email = req.body.email;
@@ -71,8 +72,7 @@ router.post('/register', function (req, res) {
                 });
             }
         });
-    }
-    else {
+    } else {
         res.status(401).json({
             error: 'All information not provided'
         });

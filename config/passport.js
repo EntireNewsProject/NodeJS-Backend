@@ -4,18 +4,27 @@ var JwtStrategy = require("passport-jwt").Strategy;
 var JwtExtract = require("passport-jwt").ExtractJwt;
 var cfg = require("./settings.js");
 
+// noinspection JSUnresolvedFunction
+/**
+ * These can be (may be in the future) more complex
+ * if need be. Depends on how you are handling authentication
+ * and serialization
+ */
 passport.serializeUser(function (user, done) {
     done(null, user);
 });
+// noinspection JSUnresolvedFunction
 passport.deserializeUser(function (user, done) {
     done(null, user);
 });
 
+// noinspection JSUnresolvedFunction
 passport.use(new JwtStrategy({
         secretOrKey: cfg.jwtSecret,
         jwtFromRequest: JwtExtract.fromAuthHeaderAsBearerToken()
-    }, function (payload, done) {
-        moduleUser.User.findById(payload._id)
+    }, function (user, done) {
+        moduleUser.User.findById(user._id)
+            .select(cfg.userFields)
             .exec()
             .then(function (user) {
                     if (user) done(null, user);
@@ -25,5 +34,5 @@ passport.use(new JwtStrategy({
             .catch(function (err) {
                 return done(err, false);
             });
-    }
-));
+    })
+);

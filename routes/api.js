@@ -17,6 +17,7 @@ var createSubtitle = function (article) {
     return article.substring(0, 200).replace(/\r?\n|\r/g, '').trim();
 };
 
+// noinspection JSUnresolvedFunction
 router.route('/news')
 //this route will get the data from the data base and respond to the request with required fields
     .get(function (req, res) {
@@ -87,7 +88,17 @@ router.route('/news')
         }
     })
     .delete(auth.isAuth, function (req, res) {
-        res.sendStatus();
+        res.sendStatus(404);
+    });
+
+router.route('/news/recommendations')
+    .get(function (req, res) {
+
+    });
+
+router.route('/news/trending')
+    .get(function (req, res) {
+
     });
 
 router.route('/news/:id')
@@ -125,6 +136,7 @@ router.route('/news/:id')
 
 router.route('/news/:id/save')
     .get(function (req, res) {
+        // noinspection JSUnresolvedVariable
         var savecheck = req.query.savecheck;
         var id = req.params.id;
         if (savecheck === 'true') {

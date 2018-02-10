@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var api = require('./routes/api');
 var user = require('./routes/user');
+var test = require('./routes/test');
 var passport = require('passport');
 var cfg = require("./config/settings.js");
 var app = express();
@@ -34,10 +35,11 @@ app.use('/static', express.static(path.join(__dirname, 'public')));
 
 app.use('/api', api);
 app.use('/user', user);
+app.use('/test', test);
 
 // catch 404 and forward to error handler
 app.use(function (err, req, res) {
-    var err = new Error('Not Found');
+    err = new Error('Not Found');
     err.status = 404;
     //next(err);
 });

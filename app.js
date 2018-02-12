@@ -4,7 +4,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var api = require('./routes/news');
+var news = require('./routes/news');
 var user = require('./routes/user');
 var test = require('./routes/test');
 var passport = require('passport');
@@ -35,7 +35,7 @@ require('./config/passport');
 
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
-app.use('/api/news', api);
+app.use('/api/news', news);
 app.use('/api/user', user);
 app.use('/api/test', test);
 

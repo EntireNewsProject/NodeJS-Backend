@@ -18,7 +18,7 @@ var createSubtitle = function (article) {
 };
 
 // noinspection JSUnresolvedFunction
-router.route('/news')
+router.route('/')
 //this route will get the data from the data base and respond to the request with required fields
     .get(function (req, res) {
         var page = Math.max(1, parseInt(req.query.page));  //used by skip for skipping the already loaded news
@@ -91,17 +91,17 @@ router.route('/news')
         res.sendStatus(404);
     });
 
-router.route('/news/recommendations')
+router.route('/recommendations')
     .get(function (req, res) {
 
     });
 
-router.route('/news/trending')
+router.route('/trending')
     .get(function (req, res) {
 
     });
 
-router.route('/news/:id')
+router.route('/:id')
     .get(function (req, res) {
         var id = req.params.id;
         if (id) {
@@ -134,7 +134,7 @@ router.route('/news/:id')
         res.sendStatus(201);
     });
 
-router.route('/news/:id/save')
+router.route('/:id/save')
     .get(function (req, res) {
         // noinspection JSUnresolvedVariable
         var savecheck = req.query.savecheck;

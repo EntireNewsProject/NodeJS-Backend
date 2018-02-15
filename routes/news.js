@@ -86,9 +86,6 @@ router.route('/')
                 error: 'All information not provided'
             });
         }
-    })
-    .delete(auth.isAuth, function (req, res) {
-        res.sendStatus(404);
     });
 
 router.route('/recommendations')
@@ -132,6 +129,29 @@ router.route('/:id')
     })
     .post(function (req, res) {
         res.sendStatus(201);
+    })
+    .delete(auth.isAuth, function (req, res) {
+        var id = req.param.id;
+        if (id) {
+            moduleNews.News
+                .fineOneAndUpdate({_id: id}, {hidden: true})
+                .exec()
+                .then(function (result) {
+                    if (result) {
+                        res.status(201).json({
+                            msg: 'Item created successfully'
+                        })
+                    }
+                    else {
+                        res.sendStatus(400).json({
+                            Error: 'Internal Server Error'
+                        })
+                    }
+                })
+        }
+        else {
+            res.sendStatus(404);
+        }
     });
 
 router.route('/:id/save')

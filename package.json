@@ -20,7 +20,8 @@
     "passport": "^0.4.0",
     "passport-jwt": "^3.0.1",
     "passport-local": "^1.0.0",
-    "serve-favicon": "^2.4.5"
+    "serve-favicon": "^2.4.5",
+    "akin": "latest"
   },
   "devDependencies": {
     "nodemon": "^1.14.11"

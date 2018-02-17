@@ -1,19 +1,21 @@
-var moduleNews = require('../models/news');
-var express = require('express');
-var router = express.Router();
-var promise = require('bluebird');
-var auth = require('../config/auth');
-var mongoose = require('mongoose');
+const moduleNews = require('../models/news');
+const express = require('express');
+const router = express.Router();
+const promise = require('bluebird');
+const auth = require('../config/auth');
+const mongoose = require('mongoose');
+const akin = require('akin');
+
 
 mongoose.Promise = promise;
 
-var MAX_LIMIT = 12;
+const MAX_LIMIT = 12;
 
-var createSlug = function (title) {
+const createSlug = function (title) {
     return title.replace(/[^\w\s]/gi, '').trim().toLowerCase().replace(/\W+/g, '-');
 };
 
-var createSubtitle = function (article) {
+const createSubtitle = function (article) {
     return article.substring(0, 200).replace(/\r?\n|\r/g, '').trim();
 };
 
@@ -21,8 +23,8 @@ var createSubtitle = function (article) {
 router.route('/')
 //this route will get the data from the data base and respond to the request with required fields
     .get(function (req, res) {
-        var page = Math.max(1, parseInt(req.query.page));  //used by skip for skipping the already loaded news
-        var source = req.query.source;
+        const page = Math.max(1, parseInt(req.query.page));  //used by skip for skipping the already loaded news
+        const source = req.query.source;
         if (source) {
             moduleNews.News
                 .find({published: true, deleted: false, source: source})
@@ -57,7 +59,7 @@ router.route('/')
         //     });
         // } else
         if (req.body.title && req.body.source) {
-            var params = {};
+            const params = {};
             params.title = req.body.title;
             params.source = req.body.source;
             if (req.body.cover) params.cover = req.body.cover;
@@ -70,7 +72,7 @@ router.route('/')
             params.published = true;
             params.deleted = false;
 
-            var news = new moduleNews.News(params);
+            const news = new moduleNews.News(params);
             news.save(function (err) {
                 if (err)
                     res.status(400).json({
@@ -100,7 +102,7 @@ router.route('/trending')
 
 router.route('/:id')
     .get(function (req, res) {
-        var id = req.params.id;
+        const id = req.params.id;
         if (id) {
             moduleNews.News
             //this will find the specific news using the ID associated with it and return all fields
@@ -109,6 +111,7 @@ router.route('/:id')
                 .then(function (result) {
                     //checks if result obtained and then return status 200 or return status 400
                     if (result) {
+                        akin.activity.log(1, id, 'news', 'view');
                         res.status(200).json(result);
                     }
                     else {
@@ -131,10 +134,10 @@ router.route('/:id')
         res.sendStatus(201);
     })
     .delete(auth.isAuth, function (req, res) {
-        var id = req.param.id;
+        const id = req.param.id;
         if (id) {
             moduleNews.News
-                .fineOneAndUpdate({_id: id}, {hidden: true})
+                .findOneAndUpdate({_id: id}, {hidden: true})
                 .exec()
                 .then(function (result) {
                     if (result) {
@@ -157,8 +160,8 @@ router.route('/:id')
 router.route('/:id/save')
     .get(function (req, res) {
         // noinspection JSUnresolvedVariable
-        var savecheck = req.query.savecheck;
-        var id = req.params.id;
+        const savecheck = req.query.savecheck;
+        const id = req.params.id;
         if (savecheck === 'true') {
             if (id) {
                 moduleNews.News

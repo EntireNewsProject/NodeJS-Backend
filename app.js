@@ -1,21 +1,21 @@
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var news = require('./routes/news');
-var user = require('./routes/user');
-var test = require('./routes/test');
-var passport = require('passport');
-var cfg = require("./config/settings.js");
-var app = express();
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const news = require('./routes/news');
+const user = require('./routes/user');
+const test = require('./routes/test');
+const passport = require('passport');
+const cfg = require("./config/settings.js");
+const app = express();
 
 mongoose.connect(cfg.database, {
     useMongoClient: true
 });
 
-var db = mongoose.connection;
+const db = mongoose.connection;
 //throw error if db connection issue
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 

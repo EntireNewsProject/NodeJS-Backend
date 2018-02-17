@@ -15,8 +15,6 @@ var userSchema = new Schema({
     active: {type: Boolean, default: false}
 }, {timestamps: true});
 
-userSchema.plugin(uniqueValidator);
-
 userSchema.pre('save', function (next) {
     // because this will not be accessible from inside if nested callback
     var user = this;
@@ -38,6 +36,8 @@ userSchema.methods.comparePassword = function (password, cb) {
         return cb(null, isMatch);
     })
 };
+
+userSchema.plugin(uniqueValidator);
 
 module.exports = {
     User: mongoose.model('User', userSchema)

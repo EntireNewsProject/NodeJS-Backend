@@ -1,5 +1,5 @@
-var passport = require('passport');
-var cfg = require("./settings.js");
+const passport = require('passport');
+const cfg = require("./settings.js");
 
 function isAuth(req, res, next) {
     // noinspection JSUnresolvedFunction

@@ -14,19 +14,18 @@ router.post('/login', (req, res) => {
         let query;
         // check if email provided instead of username
         if (req.body.username.indexOf('@') !== -1)
-            query = {email: req.body.username, password: req.body.password};
+            query = {email: req.body.username};
         else
-            query = {username: req.body.username, password: req.body.password};
+            query = {username: req.body.username};
         moduleUser.User.findOne(query)
             .select(cfg.userFields)
             .exec()
-            .then(function (user) {
+            .then(user => {
+                console.log(user);
                 if (user) {
                     user.comparePassword(req.body.password, function (err, isMatch) {
                         if (isMatch && !err) {
-                            user.password = 'password';
                             res.json({
-                                user: user,
                                 message: 'Login successful',
                                 token: 'Bearer ' + jwt.sign(user.toObject(),
                                     cfg.jwtSecret, {expiresIn: '14 days'})
@@ -46,16 +45,16 @@ router.post('/login', (req, res) => {
             })
             .catch(function (err) {
                 if (err) {
-                    console.log(err);
+                    console.log(err.name + ':', err.message);
                     res.status(500).json({
                         success: false,
-                        message: "An error occurred please try again later"
+                        message: err.message
                     });
                 }
             })
     } else {
         res.status(401).json({
-            error: 'All information not provided'
+            message: 'All information not provided'
         });
     }
 });
@@ -75,7 +74,7 @@ router.post('/register', (req, res) => {
             .then(user => {
                 if (user)
                     res.status(201).json({
-                        msg: 'User created successfully'
+                        message: 'User created successfully'
                     });
                 else
                     res.status(400).json({
@@ -83,14 +82,20 @@ router.post('/register', (req, res) => {
                     });
             })
             .catch(err => {
-                console.log(err);
-                res.status(400).json({
-                    error: 'Internal server error'
-                });
+                console.log(err.name + ':', err.message, true);
+                // mongoose validation failed
+                if (err.errors) {
+                    let msg = '';
+                    for (const e of Object.values(err.errors))
+                        msg += e.message + ', ';
+                    msg = msg.substring(0, msg.length - 2);
+                    res.status(400).json({message: msg});
+                    // something else
+                } else res.status(404).json({message: err.message});
             });
     } else {
         res.status(401).json({
-            error: 'All information not provided'
+            message: 'All information not provided'
         });
     }
 });

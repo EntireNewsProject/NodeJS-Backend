@@ -82,12 +82,12 @@ router.route('/')
 
 router.route('/recommendations')
     .get((req, res) => {
-
+        res.status(401).json({error: 'All information not provided.'});
     });
 
 router.route('/trending')
     .get((req, res) => {
-
+        res.status(401).json({error: 'All information not provided.'});
     });
 
 router.route('/:id')

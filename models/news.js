@@ -29,6 +29,18 @@ const newsSchema = new Schema({
     tags: [{type: String}]
 }, {timestamps: true});
 
+newsSchema.post('save', function (error, doc, next) {
+    if (error.code === 11000)
+        next(new Error('This item already exists, please try again'));
+    else next(error);
+});
+
+newsSchema.post('findOneAndUpdate', function (error, doc, next) {
+    if (error.code === 11000)
+        next(new Error('This news item conflicts with an existing item, please try again.'));
+    else next(error);
+});
+
 module.exports = {
     News: mongoose.model('News', newsSchema)
 };

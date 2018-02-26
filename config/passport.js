@@ -1,8 +1,8 @@
-var passport = require('passport');
-var moduleUser = require('../models/user');
-var JwtStrategy = require("passport-jwt").Strategy;
-var JwtExtract = require("passport-jwt").ExtractJwt;
-var cfg = require("./settings.js");
+const passport = require('passport');
+const moduleUser = require('../models/user');
+const JwtStrategy = require("passport-jwt").Strategy;
+const JwtExtract = require("passport-jwt").ExtractJwt;
+const cfg = require("./settings.js");
 
 // noinspection JSUnresolvedFunction
 /**

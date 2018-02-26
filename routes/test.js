@@ -1,8 +1,8 @@
-var moduleNews = require('../models/news');
-var express = require('express');
-var promise = require('bluebird');
-var router = express.Router();
-var mongoose = require('mongoose');
+const moduleNews = require('../models/news');
+const express = require('express');
+const promise = require('bluebird');
+const router = express.Router();
+const mongoose = require('mongoose');
 
 mongoose.Promise = promise;
 
@@ -17,7 +17,7 @@ test with a b c
  */
 /*
 //still need to check similarity
-var noDuplicates = function (var inpArr)
+const noDuplicates = function (const inpArr)
 {
 //sort strings
 //inpArr.sort();

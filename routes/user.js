@@ -1,15 +1,15 @@
-const moduleUser = require('../models/user');
-const express = require('express');
-const router = express.Router();
-const promise = require('bluebird');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const authHelpers = require('../config/auth');
-const cfg = require("../config/settings.js");
+const moduleUser = require('../models/user'),
+    express = require('express'),
+    router = express.Router(),
+    promise = require('bluebird'),
+    mongoose = require('mongoose'),
+    jwt = require('jsonwebtoken'),
+    authHelpers = require('../config/auth'),
+    cfg = require("../config/settings.js");
 
 mongoose.Promise = promise;
 
-router.post('/login', function (req, res) {
+router.post('/login', (req, res) => {
     if (req.body.username && req.body.password) {
         let query;
         // check if email provided instead of username
@@ -59,7 +59,7 @@ router.post('/login', function (req, res) {
         });
     }
 });
-router.post('/register', function (req, res) {
+router.post('/register', (req, res) => {
     //console.log(req.body);
     if (req.body.username && req.body.email && req.body.password) {
         //TODO check for illegal user names
@@ -72,7 +72,7 @@ router.post('/register', function (req, res) {
         const user = new moduleUser.User(params);
 
         user.save()
-            .then(function (user) {
+            .then(user => {
                 if (user)
                     res.status(201).json({
                         msg: 'User created successfully'
@@ -82,7 +82,7 @@ router.post('/register', function (req, res) {
                         message: 'An error occurred, please try again later.'
                     });
             })
-            .catch(function (err) {
+            .catch(err => {
                 console.log(err);
                 res.status(400).json({
                     error: 'Internal server error'
@@ -95,13 +95,13 @@ router.post('/register', function (req, res) {
     }
 });
 
-router.get('/authenticate', authHelpers.isAuthUser, function (req, res) {
+router.get('/authenticate', authHelpers.isAuthUser, (req, res) => {
     res.status(200).json({
         message: 'User is logged in.'
     });
 });
 
-router.get('/me', authHelpers.isAuthUser, function (req, res) {
+router.get('/me', authHelpers.isAuthUser, (req, res) => {
     const user = req.user;
     user.password = 'password';
     res.status(200).json({

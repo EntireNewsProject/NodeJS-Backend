@@ -108,7 +108,6 @@ router.get('/authenticate', authHelpers.isAuthUser, (req, res) => {
 
 router.get('/me', authHelpers.isAuthUser, (req, res) => {
     const user = req.user;
-    user.password = 'password';
     res.status(200).json({
         user: user,
         token: 'Bearer ' + jwt.sign(req.user.toObject(),

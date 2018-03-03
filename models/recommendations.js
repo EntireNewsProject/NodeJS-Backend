@@ -15,7 +15,7 @@ const ignoredSchema = new Schema({
 
 const similarSchema = new Schema({
     userId: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-    other: [new Schema({
+    others: [new Schema({
         userId: {type: Schema.Types.ObjectId, ref: 'User', required: true},
         similarity: {type: Number, required: true},
     }, {_id: false})]

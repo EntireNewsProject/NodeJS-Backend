@@ -61,4 +61,4 @@ typings/
 
 public/images/
 public/javascripts/
-/package-lock.json
+#package-lock.json

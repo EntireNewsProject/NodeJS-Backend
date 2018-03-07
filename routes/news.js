@@ -27,7 +27,7 @@ router.route('/')
                 .sort({createdAt: -1})
                 .skip((page - 1) * MAX_LIMIT)    //skips already loaded news
                 .limit(MAX_LIMIT)   //loads 12 news from database
-                .select('title source cover slug subtitle url saves views date createdAt tags')
+                .select('title source cover slug subtitle url saves views date createdAt')
                 .exec()
                 .then(result => {
                     if (result) res.status(200).json(result);

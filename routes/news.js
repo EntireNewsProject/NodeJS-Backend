@@ -1,11 +1,14 @@
 const moduleNews = require('../models/news'),
-    express = require('express'),
-    router = express.Router(),
+    //express = require('express'),
+    {Router} = require('express'),
     promise = require('bluebird'),
     auth = require('../config/auth'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    {Engine} = require('../lib/engine');
 
 mongoose.Promise = promise;
+const recommendationEngine = new Engine();
+const router = new Router();
 
 const MAX_LIMIT = 12;
 
@@ -92,18 +95,20 @@ router.route('/trending')
 
 router.route('/:id')
     .get((req, res) => {
+        console.log(req.user);
         const id = req.params.id;
         if (id) {
             moduleNews.News
             //this will find the specific news using the ID associated with it and return all fields
                 .findOneAndUpdate({_id: id}, {$inc: {views: 1}}, {new: true})
                 .exec()
-                .then(result => {
+                .then(doc => {
                     //checks if result obtained and then return status 200 or return status 400
-                    if (result) {
-                        res.status(200).json(result);
-                    }
-                    else res.status(400).json({Error: 'Internal Server Error'});
+                    if (doc) {
+                        res.status(200).json(doc);
+                        // update views for recommendation system
+                        if (req.user) recommendationEngine.views.add(req.user, doc)
+                    } else res.status(400).json({Error: 'Internal Server Error'});
                 })
                 .catch(err => res.status(400).json({Error: err.message}));
         }

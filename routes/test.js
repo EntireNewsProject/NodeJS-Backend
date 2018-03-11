@@ -23,19 +23,8 @@ var arraySimilarity = function (inpArr1, inpArr2)
         inpArr1 = tempArr;
     }
 
-    /*
-    console.log(inpArr1);
-    console.log(inpArr2);
-    console.log(inpArr1[0]);
-    console.log("bug" in inpArr1);
-    console.log(inpArr1.includes("bug"));
-    console.log(inpArr1.indexOf("bug"));
-    */
     while (count00 < inpArr1.length)
     {
-        //console.log(inpArr2.indexOf(inpArr1[count00]) >= 0);
-        //if (inpArr1[count00] in inpArr2)
-        //if (inpArr2.indexOf(inpArr1[count00]) >= 0)
         if (inpArr2.includes(inpArr1[count00]))
         {
             simCount00++;
@@ -45,26 +34,6 @@ var arraySimilarity = function (inpArr1, inpArr2)
 
     return simCount00/inpArr1.length;
 };
-
-/*
-//This takes an array of arrays, it removes similar arrays, and returns the shortend array
-removeArrayDups = function(inpArr)
-{
-    var count00, count01;
-    for (count00 = 0; count00 < inpArr.length - 1; count00++)
-    {
-        count01 = count00 + 1;
-        while (count01 < inpArr.length)
-        {
-            if (arraySimilarity(inpArr[count00], inpArr[count01]) >= .5)
-                inpArr.splice(count01, 1);
-            else
-                count01++
-        }
-    }
-    return inpArr;
-};
-*/
 
 /*
     In one loop group all of the same types of articles
@@ -78,19 +47,6 @@ var removeArrayDups = function(inpArr)
     let count00, count01;
     let current;
     let cutBase;
-    /*
-    for (count00 = 0; count00 < inpArr.length - 1; count00++)
-    {
-        count01 = count00 + 1;
-        while (count01 < inpArr.length)
-        {
-            if (arraySimilarity(inpArr[count00].tags, inpArr[count01].tags) >= .5)
-                inpArr.splice(count01, 1);
-            else
-                count01++
-        }
-    }
-    */
 
     count00 = 0;
     cutBase = false;

@@ -14,7 +14,6 @@ function isAuthUser(req, res, next) {
     // noinspection JSUnresolvedFunction
     passport.authenticate('jwt', cfg.jwtSession, function (err, user, info) {
         if ((!err || !info) && user) {
-            user.password = 'password';
             req.user = user;
             return next();
         }

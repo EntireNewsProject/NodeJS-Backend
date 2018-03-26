@@ -50,6 +50,7 @@ router.route('/')
             params.title = req.body.title;
             params.source = req.body.source;
             if (req.body.cover) params.cover = req.body.cover;
+            if (req.body.tags && req.body.tags.length > 0) params.tags = req.body.tags;
             if (req.body.article) {
                 params.article = req.body.article;
                 params.subtitle = createSubtitle(params.article);

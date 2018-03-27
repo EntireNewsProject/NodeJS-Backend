@@ -2,6 +2,7 @@ const passport = require('passport');
 const cfg = require("./settings.js");
 
 function isAuth(req, res, next) {
+    console.log('isAuth');
     // noinspection JSUnresolvedFunction
     passport.authenticate('jwt', cfg.jwtSession, function (err, user, info) {
         if (!err && !info && user)
@@ -11,6 +12,7 @@ function isAuth(req, res, next) {
 }
 
 function isAuthUser(req, res, next) {
+    console.log('isAuthUser');
     // noinspection JSUnresolvedFunction
     passport.authenticate('jwt', cfg.jwtSession, function (err, user, info) {
         if ((!err || !info) && user) {

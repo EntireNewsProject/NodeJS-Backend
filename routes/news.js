@@ -94,8 +94,7 @@ router.route('/trending')
     });
 
 router.route('/:id')
-    .get((req, res) => {
-        console.log(req.user);
+    .get(auth.isAuthUser, (req, res) => {
         const id = req.params.id;
         if (id) {
             moduleNews.News

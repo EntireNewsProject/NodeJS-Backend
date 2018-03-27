@@ -6,81 +6,13 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = promise;
 
-/*
-
-edit this file
-commit this file to git
-func two arr of arr
-each will contain tags
-test with a b c
-
- */
-/*
-//still need to check similarity
-const noDuplicates = function (const inpArr)
-{
-//sort strings
-//inpArr.sort();
-//inpArr.reverse();
-
-//sort numbers with compare function
-//inpArr.sort(function(a, b){return a - b});
-//inpArr.sort(function(a, b){return b - a});
-
-//trying again
-//the super loop is all of the base lists
-    for (count00 = 0; count00 < inpArr.length - 1; count00++)
-    {
-        //The next loop is go through all of the following lists
-        simCount = 0;
-
-        for (count01 = count00 + 1; count01 < inpArr.length; count01++)
-        {
-            //The next loop is go through all of the elements in the base list
-            //If half of them are the same as the following list remove the following list
-            count02 = 0;
-            simCount = 0;
-
-            while (simCount <= inpArr[count00].length/2 && count02 < inpArr[count00].length)
-            {
-                //if (inpArr[count00][count01] in inpArr[count01])
-                //simCount++;
-
-                //Take the element of the base list and find it in the following list
-                count03 = 0;
-                while (inpArr[count00][count02] != inpArr[count01][count03] && count03 < inpArr[count01].length)
-                {
-                    count03++;
-                }
-                if (count03 < inpArr[count01].length)
-                {
-                    simCount++;
-                }
-
-                count02++;
-            }
-
-            if (simCount >= inpArr[count00].length/2)
-            {
-                //remove from list
-            }
-            //if the simCount is too high remove the list
-            //otherwise increase the forward index
-
-        }
-
-        count00++;
-    }
-}
-
-*/
 
 //this checks two arrays of strings and checks how similar they are
 var arraySimilarity = function (inpArr1, inpArr2)
 {
-    var count00;
-    var simCount00;
-    var tempArr;
+    let count00;
+    let simCount00;
+    let tempArr;
     count00 = 0;
     simCount00 = 0;
 
@@ -91,19 +23,8 @@ var arraySimilarity = function (inpArr1, inpArr2)
         inpArr1 = tempArr;
     }
 
-    /*
-    console.log(inpArr1);
-    console.log(inpArr2);
-    console.log(inpArr1[0]);
-    console.log("bug" in inpArr1);
-    console.log(inpArr1.includes("bug"));
-    console.log(inpArr1.indexOf("bug"));
-    */
     while (count00 < inpArr1.length)
     {
-        //console.log(inpArr2.indexOf(inpArr1[count00]) >= 0);
-        //if (inpArr1[count00] in inpArr2)
-        //if (inpArr2.indexOf(inpArr1[count00]) >= 0)
         if (inpArr2.includes(inpArr1[count00]))
         {
             simCount00++;
@@ -114,22 +35,91 @@ var arraySimilarity = function (inpArr1, inpArr2)
     return simCount00/inpArr1.length;
 };
 
-//This takes an array of arrays, it removes similar arrays, and returns the shortend array
-removeArrayDups = function(inpArr)
+/*
+    In one loop group all of the same types of articles
+    two cases base gets eliminated
+    tail element gets eliminated
+    need boolean value to check elimination
+ */
+
+var removeArrayDups = function(inpArr)
 {
-    var count00, count01;
-    for (count00 = 0; count00 < inpArr.length - 1; count00++)
+    let count00, count01;
+    let current;
+    let cutBase;
+
+    count00 = 0;
+    cutBase = false;
+    while (count00 < inpArr.length - 1)
     {
+        current = count00;
         count01 = count00 + 1;
         while (count01 < inpArr.length)
         {
-            if (arraySimilarity(inpArr[count00], inpArr[count01]) >= .5)
-                inpArr.splice(count01, 1);
+            if (arraySimilarity(inpArr[current].tags, inpArr[count01].tags) >= .5)
+            {
+                //if tail is not newer cut tail
+                if (!isSecondLaterDate(inpArr[current].createdAt, inpArr[count01].createdAt))
+                    inpArr.splice(count01, 1);
+                //else cut the base
+                else {
+                    inpArr.splice(current, 1);
+                    current = count01;
+                    cutBase = true;
+                }
+            }
             else
                 count01++
         }
+
+        if (!cutBase)
+        {
+            count00++;
+        }
+        cutBase = false;
     }
+
     return inpArr;
+};
+
+var condenseArrayDups = function(inpArr)
+{
+    let count00, count01;
+    let currentData;
+    let retArr;
+
+    count00 = 0;
+    while (count00 < inpArr.length - 1)
+    {
+        retArr.append([]);
+        retArr[count00].append(inpArr[count00]);
+        currentData = inpArr[count00];
+        count01 = count00 + 1;
+        while (count01 < inpArr.length)
+        {
+            if (arraySimilarity(currentData.tags, inpArr[count01].tags) >= .5)
+            {
+                //if tail is not newer add it to similar tail
+                if (!isSecondLaterDate(currentData.createdAt, inpArr[count01].createdAt)) {
+                    retArr[count00].append(inpArr[count01]);
+                }
+                //else tail element becomes the head and head gets added to similar tail
+                else {
+                    retArr[count00].append(currentData);
+                    retArr[count00][0] = inpArr[count01];
+                    currentData = inpArr[count01];
+                }
+
+                inpArr.splice(count01, 1);
+            }
+            else
+                count01++
+        }
+
+        count00++;
+    }
+
+    return retArr;
 };
 
 var funcTest00 = function (inpArr1)
@@ -137,67 +127,62 @@ var funcTest00 = function (inpArr1)
     return inpArr1;
 };
 
+var funcTest01 = function (inpArr1)
+{
+    return inpArr1[0].tags;
+};
+
+var funcTest02 = function (inpArr1)
+{
+    return inpArr1[0].createdAt;
+};
+
+//compares dates
+var isSecondLaterDate = function (inpDate00, inpDate01)
+{
+    let firstDate, secondDate;
+    let isNewer;
+    firstDate = new Date(inpDate00);
+    secondDate = new Date(inpDate01);
+    isNewer = false;
+
+    //var dateDifference;
+    //currently unused but the purpose is to check if there is an insignificant time difference
+    //dateDifference = Math.abs(firstDate - secondDate);
+    //dateDifference /= (1000 * 60);
+
+    if (secondDate > firstDate)
+    {
+        isNewer = true;
+    }
+
+    return isNewer;
+};
 
 router.route('/dups')
     .post(function (req, res) {
+        let x = req.body.x;
+        console.log(x);
 
-        var retMess;
-        var retSim;
-        var retArray00;
+        let arrDate = ["2018-02-26T19:41:49.068Z", "2018-02-26T19:41:49.068Z", "2018-02-26T19:41:50.068Z",
+            "2018-02-26T19:42:49.068Z", "2018-02-26T20:41:49.068Z", "2018-02-27T19:41:49.068Z",
+            "2018-03-26T19:41:49.068Z", "2019-02-26T19:41:49.068Z", "2019-03-27T20:42:50.068Z"];
 
-        /*
-        console.log(req.body);
-        console.log(req.body.arr1);
-        console.log(req.body.arr1[0]);
-        console.log(req.body.arr1[1]);
-        console.log(req.body.arr1[2]);
-        //console.log(req.body.arrA1);
-        //console.log(req.body.arrA1[0]);
-        //console.log(req.body.arrA1[1]);
-        //console.log(req.body.arrA1[2]);
-        */
-        //NM: Test Cases
-        //retMess = similarityString(req.body.arrA1[0], req.body.arrA1[1]);
-        //console.log(retMess);
-        console.log(req.body.arrA1[0]);
-        retMess = (req.body.arrA1[0]);
-        console.log(retMess);
-        retMess = (req.body.arrA1);
-        console.log(retMess);
-        console.log(retMess.length);
-        console.log(retMess[0].length);
-        retMess = funcTest00(req.body.arrA1);
-        console.log(retMess);
-        console.log(retMess.length);
-        console.log(retMess[0].length);
-        retMess = req.body.arrA1;
-        retSim = arraySimilarity(retMess[0], retMess[0]);
-        console.log(retSim);
-        retSim = arraySimilarity(retMess[0], retMess[1]);
-        console.log(retSim);
-        retSim = arraySimilarity(retMess[1], retMess[0]);
-        console.log(retSim);
-        retSim = arraySimilarity(retMess[0], retMess[2]);
-        console.log(retSim);
-        retSim = arraySimilarity(retMess[2], retMess[0]);
-        console.log(retSim);
-        retSim = arraySimilarity(retMess[0], retMess[3]);
-        console.log(retSim);
-        retSim = arraySimilarity(retMess[3], retMess[0]);
-        console.log(retSim);
-        retSim = arraySimilarity(retMess[0], retMess[4]);
-        console.log(retSim);
-        retSim = arraySimilarity(retMess[4], retMess[0]);
-        console.log(retSim);
-        retSim = arraySimilarity(retMess[0], retMess[5]);
-        console.log(retSim);
-        retSim = arraySimilarity(retMess[5], retMess[0]);
-        console.log(retSim);
-        //NM: they seem to have passed
+        console.log(isSecondLaterDate(arrDate[0], arrDate[1]));
+        console.log(isSecondLaterDate(arrDate[0], arrDate[2]));
+        console.log(isSecondLaterDate(arrDate[0], arrDate[3]));
+        console.log(isSecondLaterDate(arrDate[0], arrDate[4]));
+        console.log(isSecondLaterDate(arrDate[0], arrDate[5]));
+        console.log(isSecondLaterDate(arrDate[0], arrDate[6]));
+        console.log(isSecondLaterDate(arrDate[0], arrDate[7]));
+        console.log(isSecondLaterDate(arrDate[0], arrDate[8]));
+        console.log(isSecondLaterDate(arrDate[1], arrDate[0]));
+        console.log(isSecondLaterDate(arrDate[2], arrDate[0]));
 
-        //NM: this seems to be working
-        retArray00 = removeArrayDups(retMess);
-        console.log(retArray00);
+        console.log(funcTest01(x));
+        console.log(funcTest02(x));
+
+        console.log(removeArrayDups(x));
 
         res.status(200).json({
             message: 'Yippee! Account updated...'

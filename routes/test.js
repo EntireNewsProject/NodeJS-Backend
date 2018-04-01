@@ -122,6 +122,20 @@ var condenseArrayDups = function(inpArr)
     return retArr;
 };
 
+var findArticleByID = function(inpID)
+{
+    let retArticle;
+
+    return retArticle;
+};
+
+var getRecentArticles = function()
+{
+    let recentArticles;
+
+    return recentArticles;
+};
+
 var funcTest00 = function (inpArr1)
 {
     return inpArr1;

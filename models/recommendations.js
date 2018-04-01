@@ -42,8 +42,8 @@ ignoredSchema.index({
 }, {unique: true});
 
 module.exports = {
-    Ignored: mongoose.model('Ignored', ignoredSchema),
-    Views: mongoose.model('Views', viewSchema),
     Similars: mongoose.model('Similars', similarSchema),
+    Views: mongoose.model('Views', viewSchema),
+    Ignored: mongoose.model('Ignored', ignoredSchema),
     Suggestions: mongoose.model('Suggestions', suggestionSchema)
 };

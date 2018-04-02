@@ -108,7 +108,10 @@ router.route('/:id')
                     if (doc) {
                         res.status(200).json(doc);
                         // update views for recommendation system
-                        if (req.user) recommendationEngine.views.add(req.user, doc)
+                        if (req.user) {
+                            console.log('Logged in: update views');
+                            recommendationEngine.views.add(req.user, doc)
+                        }
                     } else res.status(400).json({msg: 'Internal Server error'});
                 })
                 .catch(err => res.status(400).json({msg: err.message}));

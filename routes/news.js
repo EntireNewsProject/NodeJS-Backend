@@ -88,10 +88,15 @@ router.route('/')
 
 router.route('/recommendations')
     .get(auth.isAuthUser, (req, res) => {
-        moduleRecommendations.Suggestions.findOne({userId: req.user._id}).exec()
+        moduleRecommendations.Suggestions.findOne({userId: req.user._id})
+            .populate({
+                path: 'suggestions.newsId',
+                select: 'title source cover slug subtitle tags summary url saves views date createdAt'
+            })
+            .exec()
             .then(suggestions => {
-                if (suggestions)
-                    res.status(200).json(suggestions);
+                if (suggestions && suggestions.suggestions)
+                    res.status(200).json(suggestions.suggestions);
                 else
                     res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
             })

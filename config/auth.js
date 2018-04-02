@@ -27,6 +27,7 @@ function isAuthUser(req, res, next) {
 // will work without login
 function getAuthUser(req, res, next) {
     //console.log('getAuthUser');
+    // TODO is auth provided and is invalid, show err msg
     // noinspection JSUnresolvedFunction
     passport.authenticate('jwt', cfg.jwtSession, function (err, user, info) {
         if ((!err || !info) && user) {

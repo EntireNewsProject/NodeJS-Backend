@@ -1,4 +1,5 @@
 const moduleNews = require('../models/news'),
+    moduleRecommendations = require('../models/recommendations'),
     //express = require('express'),
     {Router} = require('express'),
     promise = require('bluebird'),
@@ -86,13 +87,20 @@ router.route('/')
     });
 
 router.route('/recommendations')
-    .get((req, res) => {
+    .get(auth.isAuthUser, (req, res) => {
         res.status(401).json({msg: 'All information not provided.'});
     });
 
 router.route('/trending')
-    .get((req, res) => {
+    .get(auth.isAuthUser, (req, res) => {
         res.status(401).json({msg: 'All information not provided.'});
+    });
+
+router.route('/refresh')
+    .get(auth.isAuthUser, (req, res) => {
+        console.log('calling refresh');
+        recommendationEngine.similars.update(req.user);
+        res.status(202).json({msg: 'Updating...'});
     });
 
 router.route('/:id')
@@ -112,7 +120,7 @@ router.route('/:id')
                             console.log('Logged in: update views');
                             recommendationEngine.views.add(req.user, doc)
                         }
-                    } else res.status(400).json({msg: 'Internal Server error'});
+                    } else res.status(400).json({msg: 'Document not found, please try again later.'});
                 })
                 .catch(err => res.status(400).json({msg: err.message}));
         }
@@ -138,9 +146,9 @@ router.route('/:id')
 router.route('/:id/save')
     .get((req, res) => {
         // noinspection JSUnresolvedVariable
-        const savecheck = req.query.savecheck;
+        const isSaved = req.query.savecheck;
         const id = req.params.id;
-        if (savecheck === 'true') {
+        if (isSaved === 'true') {
             if (id) {
                 moduleNews.News
                     .findOneAndUpdate({_id: id}, {$inc: {saves: 1}}, {new: true})
@@ -150,7 +158,7 @@ router.route('/:id/save')
                         else res.status(400).json({msg: 'Internal Server error'});
                     })
             } else res.status(404).json({msg: 'ID not provided'});
-        } else if (savecheck === 'false') {
+        } else if (isSaved === 'false') {
             if (id) {
                 moduleNews.News
                     .findOneAndUpdate({_id: id}, {$inc: {saves: -1}}, {new: true})
@@ -163,4 +171,10 @@ router.route('/:id/save')
         }
     });
 
+
+//const person = new moduleRecommendations.Suggestions({userId: '5ac282f3550833b81740c6b2'});
+//const person = new moduleNews.News({});
+//console.log(person); // { n: 'Val' }
+//console.log(person.toObject({virtuals: true})); // { n: 'Val', name: 'Val' }
+//person.save();
 module.exports = router;

@@ -88,7 +88,17 @@ router.route('/')
 
 router.route('/recommendations')
     .get(auth.isAuthUser, (req, res) => {
-        res.status(401).json({msg: 'All information not provided.'});
+        moduleRecommendations.Suggestions.findOne({userId: req.user._id}).exec()
+            .then(suggestions => {
+                if (suggestions)
+                    res.status(200).json(suggestions);
+                else
+                    res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(401).json({msg: 'An error occurred, please try again later.'});
+            })
     });
 
 router.route('/trending')
@@ -99,8 +109,12 @@ router.route('/trending')
 router.route('/refresh')
     .get(auth.isAuthUser, (req, res) => {
         console.log('calling refresh');
-        recommendationEngine.similars.update(req.user);
-        res.status(202).json({msg: 'Updating...'});
+        recommendationEngine.similars.update(req.user._id)
+            .then(() => {
+                recommendationEngine.suggestions.update(req.user._id);
+                res.status(401).json({msg: 'All information not provided.'});
+            })
+            .catch(err => console.error(err));
     });
 
 router.route('/:id')
@@ -117,8 +131,8 @@ router.route('/:id')
                         res.status(200).json(doc);
                         // update views for recommendation system
                         if (req.user) {
-                            console.log('Logged in: update views');
-                            recommendationEngine.views.add(req.user, doc)
+                            console.log('Logged in: update views for', req.user._id);
+                            recommendationEngine.views.add(req.user._id, doc)
                         }
                     } else res.status(400).json({msg: 'Document not found, please try again later.'});
                 })

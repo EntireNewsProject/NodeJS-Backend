@@ -42,6 +42,7 @@ var arraySimilarity = function (inpArr1, inpArr2)
     need boolean value to check elimination
  */
 
+//remove article duplicates
 var removeArrayDups = function(inpArr)
 {
     let count00, count01;
@@ -82,6 +83,7 @@ var removeArrayDups = function(inpArr)
     return inpArr;
 };
 
+//reduce the amount of duplicate articles to 2d array
 var condenseArrayDups = function(inpArr)
 {
     let count00, count01;
@@ -122,6 +124,7 @@ var condenseArrayDups = function(inpArr)
     return retArr;
 };
 
+//find article by id
 var findArticleByID = function(inpID)
 {
     let retArticle;
@@ -129,6 +132,7 @@ var findArticleByID = function(inpID)
     return retArticle;
 };
 
+//get recent articles
 var getRecentArticles = function()
 {
     let recentArticles;
@@ -136,16 +140,51 @@ var getRecentArticles = function()
     return recentArticles;
 };
 
+//adding similar articles to acrticle
+var assignSimilarArticlesToArticle = function(inpID)
+{
+  let currentArticle;
+  let recentArticles;
+
+  currentArticle = findArticleByID(inpID);
+  recentArticles = getRecentArticles();
+
+  function compareSim(a, b)
+  {
+      if (a.similarity < b.similarity)
+          return -1;
+      if (a.similarity > b.similarity)
+          return 1;
+      return 0;
+  };
+
+  let similarityBetweenArticles;
+  let count00;
+  let simObject;
+  for (count00 = 0; count00 < recentArticles.length; count00++)
+  {
+      simObject.similarity = arraySimilarity(currentArticle.tags, recentArticles[count00].tags);
+      simObject.index = count00;
+      similarityBetweenArticles.append(simObject);
+  }
+
+  similarityBetweenArticles.sort(compareSim);
+
+};
+
+//testing json formats
 var funcTest00 = function (inpArr1)
 {
     return inpArr1;
 };
 
+//testing json formats
 var funcTest01 = function (inpArr1)
 {
     return inpArr1[0].tags;
 };
 
+//testing json formats
 var funcTest02 = function (inpArr1)
 {
     return inpArr1[0].createdAt;

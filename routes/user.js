@@ -73,6 +73,7 @@ router.post('/register', (req, res) => {
         user.save()
             .then(user => {
                 if (user)
+                    //TODO create empty similar/suggestion records
                     res.status(201).json({
                         message: 'User created successfully'
                     });

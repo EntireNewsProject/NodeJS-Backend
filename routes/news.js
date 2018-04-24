@@ -88,7 +88,7 @@ router.route('/')
 
 router.route('/recommendations')
     .get(auth.isAuthUser, (req, res) => {
-        moduleRecommendations.Suggestions.findOne({userId: req.user._id})
+        /*moduleRecommendations.Suggestions.findOne({userId: req.user._id})
             .populate({
                 path: 'suggestions.newsId',
                 select: 'title source cover slug subtitle tags summary url saves views date createdAt'
@@ -103,6 +103,11 @@ router.route('/recommendations')
             .catch(err => {
                 console.error(err);
                 res.status(401).json({msg: 'An error occurred, please try again later.'});
+            })*/
+        recommendationEngine.suggestions.forUser(req.user._id)
+            .then(doc => {
+                console.log(doc);
+                res.status(200).json(doc);
             })
     });
 
@@ -116,9 +121,11 @@ router.route('/refresh')
         console.log('calling refresh');
         recommendationEngine.similars.update(req.user._id)
             .then(() => {
-                recommendationEngine.suggestions.update(req.user._id);
-                res.status(201).json({msg: 'Recommendation generated...'});
+                return recommendationEngine.suggestions.update(req.user._id);
             })
+            .then(() =>
+                res.status(201).json({msg: 'Recommendation generated...'})
+            )
             .catch(err => console.error(err));
     });
 

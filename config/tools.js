@@ -26,9 +26,7 @@ difference = (arr1, arr2) => {
     return temp;
 };
 
-findWhere = (obj, data) => {
-
-};
+findWhere = (obj, field, data) => obj[field].toHexString() === data;
 
 intersection = (arr1, arr2) => {
 
@@ -40,5 +38,6 @@ module.exports = {
     pluck: pluck,
     unique: unique,
     difference: difference,
-    str: str
+    str: str,
+    findWhere: findWhere
 };

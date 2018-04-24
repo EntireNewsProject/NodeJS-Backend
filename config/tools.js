@@ -1,4 +1,5 @@
-str = (arr) => arr.map(obj => obj.toHexString());
+// noinspection JSUnresolvedFunction
+toStr = (arr) => arr.map(obj => (typeof obj) === 'object' ? obj.toHexString() : obj);
 
 pluck = (arr, key) => arr.map(obj => obj[key]);
 
@@ -38,6 +39,6 @@ module.exports = {
     pluck: pluck,
     unique: unique,
     difference: difference,
-    str: str,
+    toStr: toStr,
     findWhere: findWhere
 };

@@ -117,7 +117,7 @@ router.route('/refresh')
         recommendationEngine.similars.update(req.user._id)
             .then(() => {
                 recommendationEngine.suggestions.update(req.user._id);
-                res.status(401).json({msg: 'All information not provided.'});
+                res.status(201).json({msg: 'Recommendation generated...'});
             })
             .catch(err => console.error(err));
     });

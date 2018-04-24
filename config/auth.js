@@ -13,7 +13,6 @@ function isAuth(req, res, next) {
 
 // will not work without login
 function isAuthUser(req, res, next) {
-    //console.log('isAuthUser');
     // noinspection JSUnresolvedFunction
     passport.authenticate('jwt', cfg.jwtSession, function (err, user, info) {
         if ((!err || !info) && user) {

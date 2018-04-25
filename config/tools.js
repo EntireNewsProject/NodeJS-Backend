@@ -1,6 +1,18 @@
 // noinspection JSUnresolvedFunction
 toStr = (arr) => arr.map(obj => (typeof obj) === 'object' ? obj.toHexString() : obj);
 
+const flattenObject = object => {
+    return Object.assign({}, ...function _flattenObject(objectBit, path = '') { //spread the result into our return object
+        return [].concat(                                                       //concat everything into one level
+            ...Object.keys(objectBit).map(                                      //iterate over object
+                key => typeof objectBit[key] === 'object' ?                     //check if there is a nested object
+                    _flattenObject(objectBit[key], `${ path }/${ key }`) :      //call itself if there is
+                    ({[`${ path }/${ key }`]: objectBit[key]})                  //append object with it’s path as key
+            )
+        )
+    }(object));
+};
+
 pluck = (arr, key) => arr.map(obj => obj[key]);
 
 flatten = arr => arr.reduce((flat, next) => flat.concat(next), []);
@@ -40,5 +52,6 @@ module.exports = {
     unique: unique,
     difference: difference,
     toStr: toStr,
-    findWhere: findWhere
+    findWhere: findWhere,
+    flattenObject: flattenObject
 };

@@ -5,6 +5,7 @@ const moduleNews = require('../models/news'),
     promise = require('bluebird'),
     auth = require('../config/auth'),
     mongoose = require('mongoose'),
+    tools = require('underscore'),
     {Engine} = require('../lib/engine');
 
 mongoose.Promise = promise;
@@ -105,9 +106,13 @@ router.route('/recommendations')
                 res.status(401).json({msg: 'An error occurred, please try again later.'});
             })*/
         recommendationEngine.suggestions.forUser(req.user._id)
-            .then(doc => {
-                console.log(doc);
-                res.status(200).json(doc);
+            .then(suggestions => {
+                //console.log('suggestions', suggestions);
+                if (suggestions && suggestions.length > 0)
+                    res.status(200).json(suggestions);
+                else
+                    res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
+
             })
     });
 

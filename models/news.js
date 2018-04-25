@@ -22,6 +22,7 @@ const newsSchema = new Schema({
     saves: {type: Number, default: 0},
     views: {type: Number, default: 0},
     date: {type: String, trim: true},
+    weight: {type: Number},
     published: {type: Boolean, default: false},
     deleted: {type: Boolean, default: false},
     hidden: {type: Boolean, default: false},

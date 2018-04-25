@@ -1,11 +1,8 @@
 const moduleNews = require('../models/news'),
-    moduleRecommendations = require('../models/recommendations'),
-    //express = require('express'),
     {Router} = require('express'),
     promise = require('bluebird'),
     auth = require('../config/auth'),
     mongoose = require('mongoose'),
-    tools = require('underscore'),
     {Engine} = require('../lib/engine');
 
 mongoose.Promise = promise;
@@ -27,6 +24,7 @@ router.route('/')
         const page = Math.max(1, parseInt(req.query.page));  //used by skip for skipping the already loaded news
         const source = req.query.source;
         if (source) {
+            // noinspection JSUnresolvedFunction
             moduleNews.News
                 .find({published: true, deleted: false, source: source})
                 .sort({createdAt: -1})
@@ -113,12 +111,8 @@ router.route('/refresh')
     .get(auth.isAuthUser, (req, res) => {
         console.log('calling refresh');
         recommendationEngine.similars.update(req.user._id)
-            .then(() => {
-                return recommendationEngine.suggestions.update(req.user._id);
-            })
-            .then(() =>
-                res.status(201).json({msg: 'Recommendation generated...'})
-            )
+            .then(() => recommendationEngine.suggestions.update(req.user._id))
+            .then(() => res.status(201).json({msg: 'Recommendation generated...'}))
             .catch(err => console.error(err));
     });
 

@@ -124,14 +124,15 @@ router.route('/:id')
             //this will find the specific news using the ID associated with it and return all fields
                 .findOneAndUpdate({_id: id}, {$inc: {views: 1}}, {new: true})
                 .exec()
-                .then(doc => {
+                .then(news => {
                     //checks if result obtained and then return status 200 or return status 400
-                    if (doc) {
-                        res.status(200).json(doc);
+                    if (news) {
+                        res.status(200).json(news);
                         // update views for recommendation system
                         if (req.user) {
                             console.log('Logged in: update views for', req.user._id);
-                            recommendationEngine.views.add(req.user._id, doc)
+                            recommendationEngine.ignored.remove(req.user._id, id, false)
+                                .then(() => recommendationEngine.views.add(req.user._id, id, true));
                         }
                     } else res.status(400).json({msg: 'Document not found, please try again later.'});
                 })
@@ -170,7 +171,7 @@ router.route('/:id/save')
                         if (result) res.status(200).json(result);
                         else res.status(400).json({msg: 'Internal Server error'});
                     })
-            } else res.status(404).json({msg: 'ID not provided'});
+            } else res.status(404).json({msg: 'Id not provided'});
         } else if (isSaved === 'false') {
             if (id) {
                 moduleNews.News
@@ -180,10 +181,21 @@ router.route('/:id/save')
                         if (result) res.status(200).json(result);
                         else res.status(400).json({msg: 'Internal Server error'});
                     })
-            } else res.status(404).json({msg: 'ID not provided'});
+            } else res.status(404).json({msg: 'Id not provided'});
         }
     });
 
+router.route('/:id/ignore')
+    .get(auth.getAuthUser, (req, res) => {
+        // noinspection JSUnresolvedVariable
+        const id = req.params.id;
+        if (id && req.user) {
+            recommendationEngine.views.remove(req.user._id, id, false)
+                .then(() => recommendationEngine.ignored.add(req.user._id, id, true))
+                .then(() =>
+                    res.status(200).json({msg: 'Thanks, we will update your recommendation based on your feedback.'}));
+        } else res.status(404).json({msg: 'Id not provided'});
+    });
 
 //const person = new moduleRecommendations.Suggestions({userId: '5ac282f3550833b81740c6b2'});
 //const person = new moduleNews.News({});

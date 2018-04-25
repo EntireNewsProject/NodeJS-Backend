@@ -89,22 +89,6 @@ router.route('/')
 
 router.route('/recommendations')
     .get(auth.isAuthUser, (req, res) => {
-        /*moduleRecommendations.Suggestions.findOne({userId: req.user._id})
-            .populate({
-                path: 'suggestions.newsId',
-                select: 'title source cover slug subtitle tags summary url saves views date createdAt'
-            })
-            .exec()
-            .then(suggestions => {
-                if (suggestions && suggestions.suggestions)
-                    res.status(200).json(suggestions.suggestions);
-                else
-                    res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
-            })
-            .catch(err => {
-                console.error(err);
-                res.status(401).json({msg: 'An error occurred, please try again later.'});
-            })*/
         recommendationEngine.suggestions.forUser(req.user._id)
             .then(suggestions => {
                 //console.log('suggestions', suggestions);
@@ -113,6 +97,10 @@ router.route('/recommendations')
                 else
                     res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
 
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(401).json({msg: 'An error occurred, please try again later.'});
             })
     });
 

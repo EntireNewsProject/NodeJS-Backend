@@ -9,6 +9,10 @@ const abs = function (val) {
     return Math.abs(val);
 };
 
+let max = function (val1, val2) {
+    return Math.max(val1, val2);
+};
+
 let round = function (val) {
     return Math.round(val);
 };

@@ -111,10 +111,9 @@ router.route('/trending')
         const page = Math.max(1, parseInt(req.query.page));
         moduleNews.News
             .find()
-            .sort({valTrendly: -1})
+            .sort({trendingVal: -1})
             .skip((page - 1) * MAX_LIMIT)    //skips already loaded news
             .limit(MAX_LIMIT)   //loads 12 news from database
-            .select('title source cover slug subtitle tags summary url saves views date createdAt trendingVal')
             .exec()
             .then(result => {
                 if (result) res.status(200).json(result);

@@ -143,10 +143,10 @@ router.route('/:id')
                 .then(news => {
                     //checks if result obtained and then return status 200 or return status 400
                     if (news) {
-                        res.status(200).json(news);
                         news.trendingVal = tools.trendly(news.saves * 3 + news.views,
                             news.ignores, tools.getTimestampFromId(news._id));
                         news.save();
+                        res.status(200).json(news);
                         // update views for recommendation system
                         if (req.user) {
                             console.log('Logged in: update views for', req.user._id);

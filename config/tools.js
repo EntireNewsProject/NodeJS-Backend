@@ -17,14 +17,19 @@ let round = function (val) {
     return Math.round(val);
 };
 
+let diff = function (val1, val2) {
+    return val1 - val2;
+};
+
 const trendly = function (ups, downs, dateCreated) {
-    let s = difference(ups, downs);
+    let s = diff(ups, downs);
     let order = log10(max(abs(s), 1));
     let sign;
     if (s > 0) sign = 1;
     else if (s < 0) sign = -1;
     else sign = 0;
     let seconds = dateCreated - 1420070400; // GMT: Thursday, January 1, 2015 12:00:00 AM
+    console.log(seconds);
     return round(((order * sign + seconds / 45000) * 10000));
 };
 

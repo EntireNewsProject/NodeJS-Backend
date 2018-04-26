@@ -154,8 +154,10 @@ router.route('/:id')
                         }
                     } else res.status(400).json({msg: 'Document not found, please try again later.'});
                 })
-                .catch(err => {console.error(err);
-                    res.status(400).json({msg: err.message})});
+                .catch(err => {
+                    console.error(err);
+                    res.status(400).json({msg: err.message})
+                });
         }
         //if Id not found then return status 404 with error message "error: 'Id not provided'"
         else res.status(404).json({msg: 'Id not provided'});

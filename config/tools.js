@@ -29,7 +29,6 @@ const trendly = function (ups, downs, dateCreated) {
     else if (s < 0) sign = -1;
     else sign = 0;
     let seconds = dateCreated - 1420070400; // GMT: Thursday, January 1, 2015 12:00:00 AM
-    console.log(seconds);
     return round(((order * sign + seconds / 45000) * 10000));
 };
 

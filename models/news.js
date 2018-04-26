@@ -20,6 +20,7 @@ const newsSchema = new Schema({
     },
     url: {type: String, required: [true, 'Must specify a url']},
     saves: {type: Number, default: 0},
+    ignores: {type: Number, default: 0},
     views: {type: Number, default: 0},
     date: {type: String, trim: true},
     weight: {type: Number},
@@ -27,7 +28,8 @@ const newsSchema = new Schema({
     deleted: {type: Boolean, default: false},
     hidden: {type: Boolean, default: false},
     keywords: [{type: String}],
-    tags: [{type: String}]
+    tags: [{type: String}],
+    trendingVal: {type: Number, min: 0, default: 0, index: true},
 }, {timestamps: true});
 
 newsSchema.post('save', function (error, doc, next) {

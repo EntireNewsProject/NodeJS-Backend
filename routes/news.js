@@ -3,6 +3,7 @@ const moduleNews = require('../models/news'),
     promise = require('bluebird'),
     auth = require('../config/auth'),
     mongoose = require('mongoose'),
+    tools = require('../config/tools'),
     {Engine} = require('../lib/engine');
 
 mongoose.Promise = promise;
@@ -66,6 +67,8 @@ router.route('/')
             params.deleted = false;
 
             const news = new moduleNews.News(params);
+            news.trendingVal = tools.trendly(0, 0, tools.getTimestampFromId(news._id));
+
             news.save(err => {
                 if (err) {
                     console.log(err.name + ':', err.message);
@@ -104,8 +107,20 @@ router.route('/recommendations')
     });
 
 router.route('/trending')
-    .get(auth.isAuthUser, (req, res) => {
-        res.status(401).json({msg: 'All information not provided.'});
+    .get((req, res) => {
+        const page = Math.max(1, parseInt(req.query.page));
+        moduleNews.News
+            .find()
+            .sort({valTrendly: -1})
+            .skip((page - 1) * MAX_LIMIT)    //skips already loaded news
+            .limit(MAX_LIMIT)   //loads 12 news from database
+            .select('title source cover slug subtitle tags summary url saves views date createdAt trendingVal')
+            .exec()
+            .then(result => {
+                if (result) res.status(200).json(result);
+                else res.status(400).json({msg: 'Internal server error.'});
+            })
+            .catch(err => res.status(400).json({msg: err.message}))
     });
 
 router.route('/refresh')
@@ -129,6 +144,9 @@ router.route('/:id')
                     //checks if result obtained and then return status 200 or return status 400
                     if (news) {
                         res.status(200).json(news);
+                        news.trendingVal = tools.trendly(news.saves * 3 + news.views,
+                            news.ignores, tools.getTimestampFromId(news._id));
+                        news.save();
                         // update views for recommendation system
                         if (req.user) {
                             console.log('Logged in: update views for', req.user._id);

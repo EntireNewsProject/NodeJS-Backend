@@ -1,5 +1,33 @@
 // noinspection JSUnresolvedFunction
-toStr = (arr) => arr.map(obj => (typeof obj) === 'object' ? obj.toHexString() : obj);
+const toStr = (arr) => arr.map(obj => (typeof obj) === 'object' ? obj.toHexString() : obj);
+
+const log10 = function (val) {
+    return Math.log(val) / Math.LN10;
+};
+
+const abs = function (val) {
+    return Math.abs(val);
+};
+
+let round = function (val) {
+    return Math.round(val);
+};
+
+const trendly = function (ups, downs, dateCreated) {
+    let s = difference(ups, downs);
+    let order = log10(max(abs(s), 1));
+    let sign;
+    if (s > 0) sign = 1;
+    else if (s < 0) sign = -1;
+    else sign = 0;
+    let seconds = dateCreated - 1420070400; // GMT: Thursday, January 1, 2015 12:00:00 AM
+    return round(((order * sign + seconds / 45000) * 10000));
+};
+
+let getTimestampFromId = function (id) {
+    // noinspection JSUnresolvedFunction
+    return id.getTimestamp().getTime() / 1000;
+};
 
 const flattenObject = object => {
     return Object.assign({}, ...function _flattenObject(objectBit, path = '') { //spread the result into our return object
@@ -53,5 +81,7 @@ module.exports = {
     difference: difference,
     toStr: toStr,
     findWhere: findWhere,
-    flattenObject: flattenObject
+    flattenObject: flattenObject,
+    getTimestampFromId: getTimestampFromId,
+    trendly: trendly
 };

@@ -9,8 +9,9 @@ const moduleNews = require('../models/news'),
 mongoose.Promise = promise;
 const recommendationEngine = new Engine();
 const router = new Router();
-const UPDATE_ON_ACTION = true;
 
+const UPDATE_ON_ACTION = false;
+const UPDATE_ON_REQUEST = true;
 const MAX_LIMIT = 12;
 
 const createSlug = title =>
@@ -91,19 +92,37 @@ router.route('/')
 
 router.route('/recommendations')
     .get(auth.isAuthUser, (req, res) => {
-        recommendationEngine.suggestions.forUser(req.user._id)
-            .then(suggestions => {
-                //console.log('suggestions', suggestions);
-                if (suggestions && suggestions.length > 0)
-                    res.status(200).json(suggestions);
-                else
-                    res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
+        const page = Math.max(1, parseInt(req.query.page));
+        if (UPDATE_ON_REQUEST) {
+            recommendationEngine.similars.update(req.user._id)
+                .then(() => recommendationEngine.suggestions.update(req.user._id))
+                .then(() => recommendationEngine.suggestions.forUser(req.user._id, page, MAX_LIMIT))
+                .then(suggestions => {
+                    //console.log('suggestions', suggestions);
+                    if (suggestions && suggestions.length > 0)
+                        res.status(200).json(suggestions);
+                    else
+                        res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
+                })
+                .catch(err => {
+                    console.error(err);
+                    res.status(401).json({msg: 'An error occurred, please try again later.'});
+                })
+        } else {
+            recommendationEngine.suggestions.forUser(req.user._id, page, MAX_LIMIT)
+                .then(suggestions => {
+                    //console.log('suggestions', suggestions);
+                    if (suggestions && suggestions.length > 0)
+                        res.status(200).json(suggestions);
+                    else
+                        res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
 
-            })
-            .catch(err => {
-                console.error(err);
-                res.status(401).json({msg: 'An error occurred, please try again later.'});
-            })
+                })
+                .catch(err => {
+                    console.error(err);
+                    res.status(401).json({msg: 'An error occurred, please try again later.'});
+                })
+        }
     });
 
 router.route('/trending')

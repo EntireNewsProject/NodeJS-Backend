@@ -57,6 +57,7 @@ router.route('/')
             params.source = req.body.source;
             if (req.body.cover) params.cover = req.body.cover;
             if (req.body.summary) params.summary = req.body.summary;
+            if (req.body.keywords) params.keywords = req.body.keywords;
             if (req.body.tags && req.body.tags.length > 0) params.tags = req.body.tags;
             if (req.body.article) {
                 params.article = req.body.article;

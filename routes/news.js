@@ -1,16 +1,17 @@
 const moduleNews = require('../models/news'),
-    moduleRecommendations = require('../models/recommendations'),
-    //express = require('express'),
     {Router} = require('express'),
     promise = require('bluebird'),
     auth = require('../config/auth'),
     mongoose = require('mongoose'),
+    tools = require('../config/tools'),
     {Engine} = require('../lib/engine');
 
 mongoose.Promise = promise;
 const recommendationEngine = new Engine();
 const router = new Router();
 
+const UPDATE_ON_ACTION = false;
+const UPDATE_ON_REQUEST = true;
 const MAX_LIMIT = 12;
 
 const createSlug = title =>
@@ -26,6 +27,7 @@ router.route('/')
         const page = Math.max(1, parseInt(req.query.page));  //used by skip for skipping the already loaded news
         const source = req.query.source;
         if (source) {
+            // noinspection JSUnresolvedFunction
             moduleNews.News
                 .find({published: true, deleted: false, source: source})
                 .sort({createdAt: -1})
@@ -55,6 +57,7 @@ router.route('/')
             params.source = req.body.source;
             if (req.body.cover) params.cover = req.body.cover;
             if (req.body.summary) params.summary = req.body.summary;
+            if (req.body.keywords) params.keywords = req.body.keywords;
             if (req.body.tags && req.body.tags.length > 0) params.tags = req.body.tags;
             if (req.body.article) {
                 params.article = req.body.article;
@@ -66,6 +69,8 @@ router.route('/')
             params.deleted = false;
 
             const news = new moduleNews.News(params);
+            news.trendingVal = tools.trendly(0, 0, tools.getTimestampFromId(news._id));
+
             news.save(err => {
                 if (err) {
                     console.log(err.name + ':', err.message);
@@ -88,37 +93,61 @@ router.route('/')
 
 router.route('/recommendations')
     .get(auth.isAuthUser, (req, res) => {
-        moduleRecommendations.Suggestions.findOne({userId: req.user._id})
-            .populate({
-                path: 'suggestions.newsId',
-                select: 'title source cover slug subtitle tags summary url saves views date createdAt'
-            })
-            .exec()
-            .then(suggestions => {
-                if (suggestions && suggestions.suggestions)
-                    res.status(200).json(suggestions.suggestions);
-                else
-                    res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
-            })
-            .catch(err => {
-                console.error(err);
-                res.status(401).json({msg: 'An error occurred, please try again later.'});
-            })
+        const page = Math.max(1, parseInt(req.query.page));
+        if (UPDATE_ON_REQUEST) {
+            recommendationEngine.similars.update(req.user._id)
+                .then(() => recommendationEngine.suggestions.update(req.user._id))
+                .then(() => recommendationEngine.suggestions.forUser(req.user._id, page, MAX_LIMIT))
+                .then(suggestions => {
+                    //console.log('suggestions', suggestions);
+                    if (suggestions && suggestions.length > 0)
+                        res.status(200).json(suggestions);
+                    else
+                        res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
+                })
+                .catch(err => {
+                    console.error(err);
+                    res.status(401).json({msg: 'An error occurred, please try again later.'});
+                })
+        } else {
+            recommendationEngine.suggestions.forUser(req.user._id, page, MAX_LIMIT)
+                .then(suggestions => {
+                    //console.log('suggestions', suggestions);
+                    if (suggestions && suggestions.length > 0)
+                        res.status(200).json(suggestions);
+                    else
+                        res.status(404).json({msg: 'No recommendations available at the moment, please try again later.'});
+
+                })
+                .catch(err => {
+                    console.error(err);
+                    res.status(401).json({msg: 'An error occurred, please try again later.'});
+                })
+        }
     });
 
 router.route('/trending')
-    .get(auth.isAuthUser, (req, res) => {
-        res.status(401).json({msg: 'All information not provided.'});
+    .get((req, res) => {
+        const page = Math.max(1, parseInt(req.query.page));
+        moduleNews.News
+            .find()
+            .sort({trendingVal: -1})
+            .skip((page - 1) * MAX_LIMIT)    //skips already loaded news
+            .limit(MAX_LIMIT)   //loads 12 news from database
+            .exec()
+            .then(result => {
+                if (result) res.status(200).json(result);
+                else res.status(400).json({msg: 'Internal server error.'});
+            })
+            .catch(err => res.status(400).json({msg: err.message}))
     });
 
 router.route('/refresh')
     .get(auth.isAuthUser, (req, res) => {
         console.log('calling refresh');
         recommendationEngine.similars.update(req.user._id)
-            .then(() => {
-                recommendationEngine.suggestions.update(req.user._id);
-                res.status(401).json({msg: 'All information not provided.'});
-            })
+            .then(() => recommendationEngine.suggestions.update(req.user._id))
+            .then(() => res.status(201).json({msg: 'Recommendation generated...'}))
             .catch(err => console.error(err));
     });
 
@@ -127,23 +156,30 @@ router.route('/:id')
         const id = req.params.id;
         if (id) {
             moduleNews.News
-            //this will find the specific news using the ID associated with it and return all fields
+            //this will find the specific news using the Id associated with it and return all fields
                 .findOneAndUpdate({_id: id}, {$inc: {views: 1}}, {new: true})
                 .exec()
-                .then(doc => {
+                .then(news => {
                     //checks if result obtained and then return status 200 or return status 400
-                    if (doc) {
-                        res.status(200).json(doc);
+                    if (news) {
+                        news.trendingVal = tools.trendly(news.saves * 3 + news.views,
+                            news.ignores, tools.getTimestampFromId(news._id));
+                        news.save();
+                        res.status(200).json(news);
                         // update views for recommendation system
                         if (req.user) {
                             console.log('Logged in: update views for', req.user._id);
-                            recommendationEngine.views.add(req.user._id, doc)
+                            recommendationEngine.ignored.remove(req.user._id, id, false)
+                                .then(() => recommendationEngine.views.add(req.user._id, id, UPDATE_ON_ACTION));
                         }
                     } else res.status(400).json({msg: 'Document not found, please try again later.'});
                 })
-                .catch(err => res.status(400).json({msg: err.message}));
+                .catch(err => {
+                    console.error(err);
+                    res.status(400).json({msg: err.message})
+                });
         }
-        //if ID not found then return status 404 with error message "error: 'ID not provided'"
+        //if Id not found then return status 404 with error message "error: 'Id not provided'"
         else res.status(404).json({msg: 'Id not provided'});
     })
     .post((req, res) => {
@@ -176,7 +212,7 @@ router.route('/:id/save')
                         if (result) res.status(200).json(result);
                         else res.status(400).json({msg: 'Internal Server error'});
                     })
-            } else res.status(404).json({msg: 'ID not provided'});
+            } else res.status(404).json({msg: 'Id not provided'});
         } else if (isSaved === 'false') {
             if (id) {
                 moduleNews.News
@@ -186,14 +222,20 @@ router.route('/:id/save')
                         if (result) res.status(200).json(result);
                         else res.status(400).json({msg: 'Internal Server error'});
                     })
-            } else res.status(404).json({msg: 'ID not provided'});
+            } else res.status(404).json({msg: 'Id not provided'});
         }
     });
 
+router.route('/:id/ignore')
+    .get(auth.getAuthUser, (req, res) => {
+        // noinspection JSUnresolvedVariable
+        const id = req.params.id;
+        if (id && req.user) {
+            recommendationEngine.views.remove(req.user._id, id, false)
+                .then(() => recommendationEngine.ignored.add(req.user._id, id, UPDATE_ON_ACTION))
+                .then(() =>
+                    res.status(200).json({msg: 'Thanks, we will update your recommendation based on your feedback.'}));
+        } else res.status(404).json({msg: 'Id not provided'});
+    });
 
-//const person = new moduleRecommendations.Suggestions({userId: '5ac282f3550833b81740c6b2'});
-//const person = new moduleNews.News({});
-//console.log(person); // { n: 'Val' }
-//console.log(person.toObject({virtuals: true})); // { n: 'Val', name: 'Val' }
-//person.save();
 module.exports = router;

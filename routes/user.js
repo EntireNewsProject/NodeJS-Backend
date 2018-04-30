@@ -27,6 +27,7 @@ router.post('/login', (req, res) => {
                         if (isMatch && !err) {
                             res.json({
                                 message: 'Login successful',
+                                user: user,
                                 token: 'Bearer ' + jwt.sign(user.toObject(),
                                     cfg.jwtSecret, {expiresIn: '14 days'})
                             });

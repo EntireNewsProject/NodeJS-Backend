@@ -4,33 +4,39 @@
   "private": true,
   "scripts": {
     "test": "jest",
-    "testwatch": "jest --watchAll",
     "start": "node ./bin/www",
     "watch": "nodemon ./bin/www",
     "mongo": "mongod.exe --dbpath C:/Dev/DB",
     "mongomac": "mongod"
   },
   "dependencies": {
+    "asn1": "^0.2.3",
+    "assert-plus": "^1.0.0",
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.5.1",
     "body-parser": "~1.17.1",
     "cookie-parser": "~1.4.3",
     "debug": "^2.6.9",
-    "ejs": "~2.5.6",
-    "express": "^4.16.2",
-    "jsonwebtoken": "^8.2.0",
-    "moment": "^2.21.0",
-    "mongoose": "^4.13.11",
+    "delayed-stream": "^1.0.0",
+    "ejs": "^2.5.9",
+    "express": "^4.16.3",
+    "isstream": "^0.1.2",
+    "json-schema": "^0.2.3",
+    "json-stringify-safe": "^5.0.1",
+    "jsonwebtoken": "^8.2.1",
+    "moment": "^2.22.1",
+    "mongoose": "^4.13.12",
     "morgan": "~1.8.1",
     "passport": "^0.4.0",
     "passport-jwt": "^3.0.1",
     "passport-local": "^1.0.0",
-    "serve-favicon": "^2.4.5",
-    "underscore": "^1.8.3"
+    "serve-favicon": "^2.5.0",
+    "stringstream": "0.0.5",
+    "underscore": "^1.9.0"
   },
   "devDependencies": {
     "jest": "^22.4.3",
     "jest-cli": "^22.4.3",
-    "nodemon": "^1.17.1"
+    "nodemon": "^1.17.3"
   }
 }

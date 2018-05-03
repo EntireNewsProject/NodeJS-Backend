@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "test": "jest",
     "start": "node ./bin/www",
     "watch": "nodemon ./bin/www",
     "mongo": "mongod.exe --dbpath C:/Dev/DB",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "jest": "^22.4.3",
+    "jest-cli": "^22.4.3",
     "nodemon": "^1.17.1"
   }
 }

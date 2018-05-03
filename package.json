@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "test": "jest",
+    "testwatch": "jest --watchAll",
     "start": "node ./bin/www",
     "watch": "nodemon ./bin/www",
     "mongo": "mongod.exe --dbpath C:/Dev/DB",
